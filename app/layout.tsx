@@ -109,6 +109,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
         />
+        <meta name="google-site-verification" content="gLXEl4H2xwZy8NF1cb7Ju9Qw1oVMtAmmWZGj_IJT6bA" />
       </head>
       <body className="bg-background text-slate-100 min-h-screen flex flex-col antialiased selection:bg-pulse selection:text-background">
         <Header />
