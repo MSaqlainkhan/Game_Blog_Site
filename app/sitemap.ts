@@ -3,7 +3,6 @@ import { games } from '@/data/games';
 import { reviews } from '@/data/reviews';
 import { newsArticles } from '@/data/news';
 import { guides } from '@/data/guides';
-import { authors } from '@/data/authors';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://gamerspulse.site';
@@ -46,12 +45,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/authors`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.5,
     },
     {
       url: `${baseUrl}/editorial-policy`,
@@ -111,20 +104,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  // Dynamic author routes
-  const authorRoutes: MetadataRoute.Sitemap = authors.map((author) => ({
-    url: `${baseUrl}/authors/${author.slug}`,
-    lastModified: now,
-    changeFrequency: 'monthly',
-    priority: 0.5,
-  }));
-
   return [
     ...staticRoutes,
     ...gameRoutes,
     ...reviewRoutes,
     ...newsRoutes,
     ...guideRoutes,
-    ...authorRoutes,
   ];
 }

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Review } from '@/types';
 import { RatingBadge } from './RatingBadge';
-import { getAuthorByName } from '@/data/authors';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 
 interface ReviewCardProps {
@@ -12,8 +11,6 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review, horizontal = false }: ReviewCardProps) {
-  const authorProfile = getAuthorByName(review.author.name);
-
   if (horizontal) {
     return (
       <div className="group relative flex flex-col md:flex-row rounded-2xl bg-surface border border-surface-border overflow-hidden hover:border-pulse/40 transition-all duration-300 hover:shadow-card">
@@ -42,15 +39,9 @@ export function ReviewCard({ review, horizontal = false }: ReviewCardProps) {
           <div>
             <div className="flex items-center justify-between gap-4 mb-2">
               <div className="flex items-center gap-3 text-xs text-slate-400">
-                <span className="relative z-10 flex items-center gap-1">
+                <span className="flex items-center gap-1">
                   <User className="w-3.5 h-3.5 text-pulse" />
-                  {authorProfile ? (
-                    <Link href={`/authors/${authorProfile.slug}`} className="hover:text-pulse hover:underline">
-                      {review.author.name}
-                    </Link>
-                  ) : (
-                    review.author.name
-                  )}
+                  {review.author.name}
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
@@ -116,15 +107,7 @@ export function ReviewCard({ review, horizontal = false }: ReviewCardProps) {
       {/* Content */}
       <div className="flex flex-col flex-grow p-5">
         <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
-          <span className="relative z-10">
-            {authorProfile ? (
-              <Link href={`/authors/${authorProfile.slug}`} className="hover:text-pulse hover:underline">
-                {review.author.name}
-              </Link>
-            ) : (
-              review.author.name
-            )}
-          </span>
+          <span>{review.author.name}</span>
           <span>•</span>
           <span>{review.publishedAt}</span>
         </div>

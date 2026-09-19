@@ -8,7 +8,7 @@ export const newsArticles: NewsArticle[] = [
     category: 'Industry',
     summary:
       'A deep technical examination of Epic Games’ latest Unreal Engine geometry advancements, analyzing how runtime displacement mapping balances micro-polygon detail against system memory bandwidth.',
-    heroImage: 'https://images.unsplash.com/photo-1555618254-84e2cf498b01?auto=format&fit=crop&w=1200&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
     publishedAt: 'September 12, 2024',
     updatedAt: 'September 14, 2024',
     readTime: '6 min read',
@@ -40,7 +40,7 @@ export const newsArticles: NewsArticle[] = [
     category: 'PC',
     summary:
       'How compatibility layers, low-wattage APU architectures, and customized Linux operating systems transformed portable PC gaming from a niche hobby into an essential platform.',
-    heroImage: 'https://images.unsplash.com/photo-1665041982909-8a86864a1e49?auto=format&fit=crop&w=1200&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
     publishedAt: 'August 29, 2024',
     readTime: '7 min read',
     author: {
@@ -71,7 +71,7 @@ export const newsArticles: NewsArticle[] = [
     category: 'Gaming News',
     summary:
       'Players increasingly expect their save files, cosmetics, and achievements to follow them across PC, console, and mobile. How publishers are navigating account federation and platform holder negotiations.',
-    heroImage: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=1200&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
     publishedAt: 'August 15, 2024',
     readTime: '5 min read',
     author: {
@@ -102,7 +102,7 @@ export const newsArticles: NewsArticle[] = [
     category: 'Industry',
     summary:
       'Amidst a sea of battle passes and daily engagement loops, player fatigue has driven a passionate renaissance for rich, self-contained single-player games that respect the player’s time.',
-    heroImage: 'https://images.unsplash.com/photo-1585427795543-33cf23ea2853?auto=format&fit=crop&w=1200&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
     publishedAt: 'July 22, 2024',
     readTime: '6 min read',
     author: {
@@ -110,7 +110,7 @@ export const newsArticles: NewsArticle[] = [
       role: 'Senior Editorial Reviewer'
     },
     introduction:
-      'For nearly a decade, industry forecasts treated traditional single-player games as a shrinking category. Corporate strategy prioritized daily active users (DAUs), recurring revenue models, and battle pass monetization. The commercial performance of recent single-player releases tells a different story.',
+      'For nearly a decade, industry prognosticators declared traditional single-player games an endangered species. Corporate balance sheets prioritized daily active users (DAUs), perpetual recurring revenue models, and battle pass monetization. Yet the resounding commercial and critical triumphs of recent years tell a completely different story.',
     mainStory:
       'From the towering success of Baldur’s Gate 3 and Elden Ring to focused narrative experiences like Alan Wake 2 and indie wonders like Balatro, audiences are demonstrating an insatiable appetite for games with definitive beginnings, middles, and endings. The psychological fatigue associated with "games as a second job"—where missing a week of play means falling behind seasonal rewards—has pushed millions of players back toward self-directed, authored experiences.\n\nImmersive game design treats the player as a thoughtful collaborator rather than a monetization metric. Environmental puzzles that can be solved via multiple systemic routes, unhurried pacing that builds genuine atmospheric tension, and stories that conclude with emotional catharsis cannot be replicated within infinite treadmill formats.',
     whatWeKnow:
@@ -133,7 +133,7 @@ export const newsArticles: NewsArticle[] = [
     category: 'PlayStation',
     summary:
       'An analysis of PlayStation Spectral Super Resolution (PSSR), exploring how custom neural network hardware accelerates image reconstruction without sacrificing temporal stability.',
-    heroImage: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80',
     publishedAt: 'July 8, 2024',
     readTime: '6 min read',
     author: {
@@ -164,7 +164,7 @@ export const newsArticles: NewsArticle[] = [
     category: 'Nintendo',
     summary:
       'Why library continuity, digital account preservation, and physical cartridge compatibility represent the critical foundation for Nintendo’s upcoming console generation.',
-    heroImage: 'https://images.unsplash.com/photo-1550921464-9f7a27f99edc?auto=format&fit=crop&w=1200&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1200&q=80',
     publishedAt: 'June 18, 2024',
     readTime: '5 min read',
     author: {
@@ -178,7 +178,7 @@ export const newsArticles: NewsArticle[] = [
     whatWeKnow:
       'Nintendo executive statements have repeatedly emphasized the centrality of the unified Nintendo Account system as the bridge connecting current players to future hardware. This digital continuity ensures purchases, friend rosters, and save data will persist without requiring third-party account migration.',
     whyItMatters:
-      'Digital preservation matters for both player trust and long-term platform health. Games like The Legend of Zelda: Tears of the Kingdom and Xenoblade Chronicles 3 already push existing handheld silicon close to its limits; backward compatibility with performance enhancements would let those titles run with better framerate stability and sharper output on newer hardware.',
+      'Digital preservation is essential for both player trust and medium sustainability. Games like The Legend of Zelda: Tears of the Kingdom and Xenoblade Chronicles 3 push existing handheld silicon to its absolute limits; backward compatibility with performance enhancements will allow these masterpieces to be enjoyed with the framerate stability and visual sharpness they deserve.',
     whatHappensNext:
       'As official hardware announcements approach, the gaming world will closely watch for details regarding physical cartridge slot backward compatibility, digital patch policies for existing games, and potential graphical enhancement updates for beloved first-party classics.',
     relatedArticleSlugs: [

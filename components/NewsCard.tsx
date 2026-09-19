@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { NewsArticle } from '@/types';
-import { getAuthorByName } from '@/data/authors';
 import { Clock, Calendar, ArrowRight } from 'lucide-react';
 
 interface NewsCardProps {
@@ -11,8 +10,6 @@ interface NewsCardProps {
 }
 
 export function NewsCard({ article, featured = false }: NewsCardProps) {
-  const authorProfile = getAuthorByName(article.author.name);
-
   if (featured) {
     return (
       <div className="group relative flex flex-col lg:flex-row rounded-3xl bg-surface border border-surface-border overflow-hidden hover:border-pulse/50 transition-all duration-300 hover:shadow-card">
@@ -66,16 +63,8 @@ export function NewsCard({ article, featured = false }: NewsCardProps) {
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-surface-border text-xs">
-            <span className="relative z-10 text-slate-400">
-              By{' '}
-              {authorProfile ? (
-                <Link href={`/authors/${authorProfile.slug}`} className="font-bold text-slate-200 hover:text-pulse hover:underline">
-                  {article.author.name}
-                </Link>
-              ) : (
-                <strong className="text-slate-200">{article.author.name}</strong>
-              )}{' '}
-              ({article.author.role})
+            <span className="text-slate-400">
+              By <strong className="text-slate-200">{article.author.name}</strong> ({article.author.role})
             </span>
             <span className="relative z-10 inline-flex items-center gap-1.5 font-bold text-pulse group-hover:text-pulse-hover">
               <span>Read Full Story</span>
@@ -129,14 +118,8 @@ export function NewsCard({ article, featured = false }: NewsCardProps) {
         </p>
 
         <div className="flex items-center justify-between pt-3 border-t border-surface-border text-xs">
-          <span className="relative z-10 text-slate-500 truncate max-w-[140px]">
-            {authorProfile ? (
-              <Link href={`/authors/${authorProfile.slug}`} className="hover:text-pulse hover:underline">
-                {article.author.name}
-              </Link>
-            ) : (
-              article.author.name
-            )}
+          <span className="text-slate-500 truncate max-w-[140px]">
+            {article.author.name}
           </span>
           <span className="relative z-10 inline-flex items-center gap-1 font-semibold text-pulse group-hover:text-pulse-hover">
             <span>Read More</span>

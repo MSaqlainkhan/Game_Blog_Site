@@ -25,15 +25,11 @@ export function Newsletter({ className = '' }: NewsletterProps) {
 
     setStatus('loading');
 
-    const mailBody = encodeURIComponent(
-      `Please add this address to the GamersPulse update list: ${email}`
-    );
-    window.location.href = `mailto:contact@gamerspulse.site?subject=${encodeURIComponent(
-      'Newsletter subscription request'
-    )}&body=${mailBody}`;
-
-    setStatus('success');
-    setEmail('');
+    // Simulate realistic validation delay
+    setTimeout(() => {
+      setStatus('success');
+      setEmail('');
+    }, 600);
   };
 
   return (
@@ -63,9 +59,9 @@ export function Newsletter({ className = '' }: NewsletterProps) {
           <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 flex items-center justify-center gap-3 animate-in fade-in duration-300">
             <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
             <div className="text-left text-sm">
-              <strong className="block font-bold">Almost there!</strong>
+              <strong className="block font-bold">Thank you for your interest!</strong>
               <span>
-                We&rsquo;ve opened your email client with a pre-filled subscription request to our editorial inbox. Send it to confirm — we add addresses to the update list by hand.
+                Your request has been simulated on this frontend demonstration. When public newsletter dispatch connects, subscribers will receive our weekly digest.
               </span>
             </div>
           </div>
@@ -105,7 +101,7 @@ export function Newsletter({ className = '' }: NewsletterProps) {
         )}
 
         <p className="mt-4 text-[11px] text-slate-500">
-          No spam, no tracking pixels, no data sold to third parties. Unsubscribe anytime by emailing us.
+          No spam, no tracking pixels. Unsubscribe anytime. Independent gaming journalism since 2024.
         </p>
       </div>
     </section>

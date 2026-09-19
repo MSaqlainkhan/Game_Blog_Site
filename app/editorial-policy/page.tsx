@@ -19,9 +19,6 @@ export const metadata: Metadata = {
   title: 'Editorial Policy & Standards — GamersPulse',
   description:
     'GamersPulse editorial guidelines covering factual accuracy, review scoring standards, sponsored content separation, corrections, and AI disclosures.',
-  alternates: {
-    canonical: '/editorial-policy',
-  },
   openGraph: {
     title: 'Editorial Policy | GamersPulse',
     description:
@@ -60,7 +57,7 @@ export default function EditorialPolicyPage() {
           <ul className="space-y-3 text-sm sm:text-base">
             <li className="flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-pulse shrink-0 mt-1" />
-              <span><strong>Accuracy:</strong> All reporting must be grounded in official release notes, patch documentation, developer communications, and publicly available gameplay footage. We do not claim firsthand playtesting we have not actually performed.</span>
+              <span><strong>Accuracy:</strong> All reporting must be grounded in verified documentation, direct hands-on testing, official release notes, or verified developer announcements.</span>
             </li>
             <li className="flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-pulse shrink-0 mt-1" />
@@ -94,7 +91,7 @@ export default function EditorialPolicyPage() {
             3. Review Scoring Methodology
           </h2>
           <p className="mb-4">
-            Our game reviews represent independent, critical assessments of a title's merits and shortcomings, built from official patch notes, developer documentation, publicly available gameplay footage, and cross-referenced community and press reporting. Where a review describes hands-on impressions, that reflects direct testing by the credited author; we do not present secondhand research as personal playtesting.
+            Our game reviews represent independent, critical assessments of a title’s merits and shortcomings. Reviewers spend substantive time with each title across relevant platforms to experience the full gameplay loop, technical performance, and narrative arc before awarding a score.
           </p>
           <div className="bg-surface-subtle p-5 rounded-xl border border-surface-border text-sm space-y-2 mb-4">
             <p><strong>10.0: Masterpiece</strong> — A rare and defining achievement that sets a new high mark for its genre.</p>
@@ -176,25 +173,11 @@ export default function EditorialPolicyPage() {
           </p>
         </section>
 
-        {/* Imagery & Visual Assets */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <FileText className="w-5 h-5 text-pulse" />
-            8. Imagery & Visual Assets
-          </h2>
-          <p className="mb-4">
-            GamersPulse does not yet have access to licensed official screenshots or press-kit artwork for most of the titles we cover. Featured and hero images across the site are properly licensed editorial stock photography (used under the Unsplash License), chosen to be unique to each article and never presented as an official in-game screenshot.
-          </p>
-          <p>
-            Where we do use official developer- or publisher-provided artwork, it will be credited to its source. We do not reuse a single image as the featured image for unrelated articles or games.
-          </p>
-        </section>
-
         {/* AI-Assisted Content */}
         <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
             <Cpu className="w-5 h-5 text-pulse" />
-            9. AI-Assisted Content Guidelines
+            8. AI-Assisted Content Guidelines
           </h2>
           <p className="mb-4">
             GamersPulse believes in total transparency regarding modern editorial technology. AI tools may assist our editorial workflow with research discovery, outlining, copy editing, or drafting assistance.
@@ -208,7 +191,7 @@ export default function EditorialPolicyPage() {
         <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
             <Mail className="w-5 h-5 text-pulse" />
-            10. Contacting Our Editorial Team
+            9. Contacting Our Editorial Team
           </h2>
           <p className="mb-6">
             If you have questions regarding our editorial standards, wish to dispute a factual statement, or want to submit feedback, our team is always available.

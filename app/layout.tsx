@@ -93,7 +93,7 @@ export default function RootLayout({
     '@type': 'NewsMediaOrganization',
     name: 'GamersPulse',
     url: 'https://gamerspulse.site',
-    logo: 'https://gamerspulse.site/icon',
+    logo: 'https://gamerspulse.site/icon.png',
     publishingPrinciples: 'https://gamerspulse.site/editorial-policy',
     correctionsPolicy: 'https://gamerspulse.site/editorial-policy#corrections'
   };
@@ -102,11 +102,6 @@ export default function RootLayout({
     <html lang="en" className="dark scroll-smooth">
       <head>
         <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7643058739252135"
-          crossOrigin="anonymous"
-        />
-        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}
         />
@@ -114,6 +109,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
         />
+        <meta name="google-site-verification" content="gLXEl4H2xwZy8NF1cb7Ju9Qw1oVMtAmmWZGj_IJT6bA" />
       </head>
       <body className="bg-background text-slate-100 min-h-screen flex flex-col antialiased selection:bg-pulse selection:text-background">
         <Header />

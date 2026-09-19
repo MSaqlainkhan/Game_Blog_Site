@@ -8,9 +8,6 @@ export const metadata: Metadata = {
   title: 'Privacy Policy — GamersPulse',
   description:
     'Learn how GamersPulse handles visitor data, cookies, analytics, and privacy protections across our gaming publication.',
-  alternates: {
-    canonical: '/privacy-policy',
-  },
   openGraph: {
     title: 'Privacy Policy | GamersPulse',
     description:

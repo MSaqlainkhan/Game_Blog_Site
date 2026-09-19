@@ -51,9 +51,6 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: `${game.title} — Overview, Features & Technical Breakdown`,
     description: game.description,
-    alternates: {
-      canonical: `/games/${game.slug}`,
-    },
     openGraph: {
       title: `${game.title} | GamersPulse`,
       description: game.description,

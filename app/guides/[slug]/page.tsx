@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getAllGuides, getGuideBySlug, getGameBySlug, getRelatedGames } from '@/lib/data';
-import { getAuthorByName } from '@/data/authors';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ShareButtons } from '@/components/ShareButtons';
 import { GuideCard } from '@/components/GuideCard';
@@ -41,9 +40,6 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: `${guide.title} — GamersPulse Guide`,
     description: guide.summary,
-    alternates: {
-      canonical: `/guides/${guide.slug}`,
-    },
     openGraph: {
       title: `${guide.title} | GamersPulse Guides`,
       description: guide.summary,
@@ -60,7 +56,6 @@ export default function GuideDetailPage({ params }: Props) {
   }
 
   const associatedGame = getGameBySlug(guide.gameSlug);
-  const authorProfile = getAuthorByName(guide.author.name);
   const relatedGuides = guide.relatedGuideSlugs
     .map((s) => getGuideBySlug(s))
     .filter(Boolean);
@@ -130,14 +125,7 @@ export default function GuideDetailPage({ params }: Props) {
         <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-surface-border text-xs sm:text-sm text-slate-400">
           <span className="flex items-center gap-1.5 text-slate-200 font-semibold">
             <User className="w-4 h-4 text-pulse" />
-            {authorProfile ? (
-              <Link href={`/authors/${authorProfile.slug}`} className="hover:text-pulse hover:underline">
-                {guide.author.name}
-              </Link>
-            ) : (
-              guide.author.name
-            )}{' '}
-            ({guide.author.role})
+            {guide.author.name} ({guide.author.role})
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5">

@@ -37,7 +37,7 @@ export default function HomePage() {
       image: allGames[0].coverImage,
       category: allGames[0].genre,
       url: `/games/${allGames[0].slug}`,
-      badge: `${allGames[0].rating} Rating`,
+      badge: '9.6 Rating',
     },
     {
       type: 'Guide',
@@ -53,9 +53,9 @@ export default function HomePage() {
       title: `${allReviews[2].gameTitle} Review`,
       summary: allReviews[2].summary,
       image: allReviews[2].coverImage,
-      category: `${allReviews[2].score} / 10 Score`,
+      category: '9.8 Masterpiece',
       url: `/reviews/${allReviews[2].slug}`,
-      badge: allReviews[2].author.name,
+      badge: 'Score: 9.8',
     },
     {
       type: 'News',

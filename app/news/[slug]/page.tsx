@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getAllNews, getNewsBySlug, getGameBySlug } from '@/lib/data';
-import { getAuthorByName } from '@/data/authors';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ShareButtons } from '@/components/ShareButtons';
 import { NewsCard } from '@/components/NewsCard';
@@ -31,9 +30,6 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: `${article.title} — GamersPulse News`,
     description: article.summary,
-    alternates: {
-      canonical: `/news/${article.slug}`,
-    },
     openGraph: {
       title: `${article.title} | GamersPulse`,
       description: article.summary,
@@ -49,7 +45,6 @@ export default function NewsArticlePage({ params }: Props) {
     notFound();
   }
 
-  const authorProfile = getAuthorByName(article.author.name);
   const relatedArticles = article.relatedArticleSlugs
     .map((s) => getNewsBySlug(s))
     .filter(Boolean);
@@ -111,14 +106,7 @@ export default function NewsArticlePage({ params }: Props) {
         <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-surface-border text-xs sm:text-sm text-slate-400">
           <span className="flex items-center gap-1.5 text-slate-200 font-semibold">
             <User className="w-4 h-4 text-pulse" />
-            {authorProfile ? (
-              <Link href={`/authors/${authorProfile.slug}`} className="hover:text-pulse hover:underline">
-                {article.author.name}
-              </Link>
-            ) : (
-              article.author.name
-            )}{' '}
-            ({article.author.role})
+            {article.author.name} ({article.author.role})
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5">

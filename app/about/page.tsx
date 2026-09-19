@@ -19,9 +19,6 @@ export const metadata: Metadata = {
   title: 'About GamersPulse — Independent Gaming Publication',
   description:
     'GamersPulse is a gaming-focused digital publication created to help players discover games, follow gaming news, read reviews and find useful guides.',
-  alternates: {
-    canonical: '/about',
-  },
   openGraph: {
     title: 'About GamersPulse',
     description:
@@ -76,32 +73,17 @@ export default function AboutPage() {
       </div>
 
       <div className="space-y-12 text-slate-300 leading-relaxed text-base md:text-lg">
-        {/* Who Runs GamersPulse */}
+        {/* What We Do */}
         <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
             <Target className="w-5 h-5 text-pulse" />
-            Who Runs GamersPulse
+            What We Do
           </h2>
           <p className="mb-4">
-            GamersPulse is a small, independently operated gaming publication. Coverage is organized around three editorial bylines, each focused on a specific area — action RPGs and horror, narrative RPGs and platform policy, and hardware/technical analysis. You can see exactly who wrote what, and read more about each byline's coverage focus, on our{' '}
-            <Link href="/authors" className="text-pulse font-semibold underline">Authors & Contributors</Link> page.
+            GamersPulse was founded to cut through the noise of clickbait headlines, engagement algorithms, and superficial content. As dedicated video game players and technology analysts, we produce comprehensive, readable editorial content designed to inform and assist players throughout their gaming journey.
           </p>
           <p>
-            GamersPulse is not affiliated with, sponsored by, or endorsed by any game publisher, developer, or platform holder mentioned on this site.
-          </p>
-        </section>
-
-        {/* Why We Exist */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Gamepad2 className="w-5 h-5 text-pulse" />
-            Why GamersPulse Exists
-          </h2>
-          <p className="mb-4">
-            Most gaming coverage online is optimized for pageviews rather than usefulness — recycled press releases, review scores untethered from stated criteria, and guides padded to hit a word count. GamersPulse exists to do the opposite: publish reviews with a consistent, published scoring methodology, guides built around specific mechanics and numbers rather than vague tips, and news analysis that separates confirmed facts from speculation.
-          </p>
-          <p>
-            We don't cover every release. We'd rather publish fewer, more useful pieces than chase every trending headline.
+            Whether analyzing the technical nuances of modern GPU upscalers, crafting step-by-step boss encounter blueprints, or delivering honest review scores that players can depend on, our priority is always reader utility and editorial integrity.
           </p>
         </section>
 
@@ -145,52 +127,32 @@ export default function AboutPage() {
         {/* Ad Container */}
         <AdSlot format="horizontal" slotId="about-mid-slot" />
 
-        {/* Editorial Approach & Content Standards */}
+        {/* Editorial Approach */}
         <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
             <FileCheck className="w-5 h-5 text-pulse" />
-            Editorial Approach & Content Standards
+            Our Editorial Approach
           </h2>
           <p className="mb-4">
-            Reviews, guides, and news on GamersPulse go through the same basic process: research against primary sources (official patch notes, developer communications, and publicly available gameplay footage), a written draft grounded in specific mechanics rather than general impressions, and an editorial pass before publishing.
+            Our editorial approach is governed by three foundational pillars: <strong>utility</strong>, <strong>clarity</strong>, and <strong>transparency</strong>.
           </p>
           <ul className="space-y-3 text-sm sm:text-base">
             <li className="flex items-start gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-pulse mt-2 shrink-0" />
               <span>
-                <strong>Original writing:</strong> We do not scrape third-party websites, republish press releases without analysis, or generate thin, keyword-stuffed articles.
+                <strong>Original Craftsmanship:</strong> We do not scrape third-party websites, republish marketing press releases without analysis, or generate thin keyword-stuffed articles.
               </span>
             </li>
             <li className="flex items-start gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-pulse mt-2 shrink-0" />
               <span>
-                <strong>Sources:</strong> Technical and gameplay claims are checked against official patch notes, developer statements, and documented, verifiable gameplay footage. Rumors and unconfirmed reports are explicitly labeled as speculative, never presented as fact.
+                <strong>Factual Accuracy:</strong> We verify patch notes, performance metrics, and platform details firsthand before publishing. When rumors or unconfirmed reports are discussed, they are explicitly identified as speculative.
               </span>
             </li>
             <li className="flex items-start gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-pulse mt-2 shrink-0" />
               <span>
-                <strong>Corrections:</strong> Factual errors are corrected in the article text with a visible correction notice. Our full process is in the{' '}
-                <Link href="/editorial-policy#corrections" className="text-pulse underline">Editorial Policy</Link>.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-pulse mt-2 shrink-0" />
-              <span>
-                <strong>Editorial independence:</strong> No publisher, developer, or advertiser receives advance notice of a review score or the ability to influence it.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-pulse mt-2 shrink-0" />
-              <span>
-                <strong>Sponsored & affiliate content:</strong> GamersPulse does not currently run sponsored content or affiliate links. If either is introduced, it will be clearly labeled at the top of the page — see our{' '}
-                <Link href="/editorial-policy" className="text-pulse underline">Editorial Policy</Link> for the full disclosure commitment.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-pulse mt-2 shrink-0" />
-              <span>
-                <strong>Updates:</strong> Reviews and guides are revisited after major patches when mechanics change meaningfully; an &ldquo;Updated&rdquo; date is shown alongside the original publish date when that happens.
+                <strong>Zero Sponsored Influence:</strong> Commercial partnerships or future advertising programs never dictate review verdicts, editorial conclusions, or coverage priority.
               </span>
             </li>
           </ul>

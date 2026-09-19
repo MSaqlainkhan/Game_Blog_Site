@@ -15,9 +15,9 @@ export const games: Game[] = [
     publisher: 'Bandai Namco Entertainment',
     rating: 9.6,
     description:
-      'A large-scale expansion set in the Land of Shadow, built around vertically stacked level design, demanding boss encounters, and an independent Scadutree blessing progression system separate from base-game character level.',
+      'A sprawling expansion that plunges players into the Land of Shadow, introducing complex vertical level design, grueling boss encounters, and an independent Scadutree blessing progression system.',
     overview:
-      'Guided by Empyrean Miquella, players enter the Land of Shadow, a realm severed from the Lands Between. Shadow of the Erdtree builds on FromSoftware\'s open-world formula by concentrating exploration into multi-layered vertical regions filled with legacy dungeons, hidden catacombs, and item-based lore.',
+      'Guided by Empyrean Miquella, players enter the Land of Shadow, a realm severed from the Lands Between. Shadow of the Erdtree builds directly on FromSoftware\'s masterwork open-world formula by concentrating exploration into multi-layered vertical regions filled with dense legacy dungeons, hidden catacombs, and solemn lore.',
     gameplay:
       'Combat remains deliberately paced and demanding, bolstered by eight completely new weapon archetypes including Light Greatswords, Hand-to-Hand Arts, and Backhand Blades. A dedicated regional scaling system known as Scadutree Blessings dictates damage output and damage negation, ensuring that high-level base game builds still encounter calibrated resistance throughout the expansion.',
     features: [
@@ -28,16 +28,16 @@ export const games: Game[] = [
       'Over 40 unique boss and field boss encounters'
     ],
     graphics:
-      'The expansion runs on FromSoftware\'s proprietary engine with enhanced volumetric lighting and atmospheric fog. The burnt silhouette of the Scadutree dominates the skyline from most regions, giving players a consistent landmark for orientation across the map.',
+      'The expansion utilizes FromSoftware\'s proprietary engine with enhanced volumetric lighting, atmospheric fog, and breathtaking vista composition. The burnt silhouettes of the Scadutree dominate the skyline with striking contrast against golden phantom plains.',
     sound:
       'An orchestral score composed by Tsukasa Saitoh, Shoi Miyazawa, and colleagues delivers haunting choral melodies and aggressive brass sections that underscore catastrophic boss encounters.',
     performance:
       'Runs at up to 60 FPS on PlayStation 5 and Xbox Series X in performance mode, with ray-tracing toggles available. On PC, framerates scale with modern hardware, with stutter mitigation improved over initial launch patches.',
     pros: [
-      'Vertically interconnected map layout that rewards thorough exploration',
-      'Eight new weapon archetypes that open up underused build categories',
-      'Distinct art direction across individual legacy dungeons',
-      'High mechanical challenge that rewards learning enemy patterns'
+      'Unmatched vertical map layout and interconnected exploration',
+      'Diverse new weapon archetypes that revitalize combat builds',
+      'Awe-inspiring art direction and memorable legacy dungeons',
+      'High mechanical challenge that rewards tactical mastery'
     ],
     cons: [
       'Steep difficulty spike for uncollected blessing tiers',
@@ -83,7 +83,7 @@ export const games: Game[] = [
     pros: [
       'Griping political espionage storyline with authentic character depth',
       'Substantial combat fluidity and cyberware build diversity',
-      'Full path-tracing support delivers a genuine visual benchmark on capable GPUs',
+      'Phenomenal visual fidelity and dense environmental atmosphere',
       'Impactful narrative decisions that challenge personal allegiances'
     ],
     cons: [
@@ -128,10 +128,10 @@ export const games: Game[] = [
     performance:
       'Solid performance through Acts 1 and 2; Act 3 city density places heavy demands on CPU performance, though ongoing patches have substantially stabilized framerates across console and PC.',
     pros: [
-      'High degree of narrative reactivity across most quests and dialogue',
-      'Companion story arcs with distinct character progression paths',
+      'Unmatched depth of player freedom and narrative reactivity',
+      'Compelling companion story arcs with memorable character progression',
       'Tactically rewarding turn-based combat with environmental manipulation',
-      'High replayability across different origin characters and moral paths'
+      'Exceptional replayability across different origin characters and moral paths'
     ],
     cons: [
       'Act 3 urban centers remain CPU heavy during intensive rendering',
@@ -147,7 +147,7 @@ export const games: Game[] = [
     slug: 'alan-wake-2',
     title: 'Alan Wake 2',
     coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1609523235355-82f40b23a6f2?auto=format&fit=crop&w=1600&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
     genre: 'Horror',
     genres: ['Horror', 'Adventure', 'Action'],
     platforms: ['PC', 'PlayStation', 'Xbox'],
@@ -156,7 +156,7 @@ export const games: Game[] = [
     publisher: 'Epic Games Publishing',
     rating: 9.4,
     description:
-      'A psychological survival horror game bridging two realities through FBI agent Saga Anderson and trapped novelist Alan Wake, mixing live-action footage with in-engine rendering.',
+      'A psychological survival horror masterpiece bridging two realities through FBI agent Saga Anderson and trapped novelist Alan Wake.',
     overview:
       'Thirteen years after disappearing into the Dark Place beneath Cauldron Lake, writer Alan Wake attempts to write his escape into reality while FBI agent Saga Anderson investigates ritualistic murders in the Pacific Northwest town of Bright Falls. Remedy creates an intense, multimedia survival horror experience.',
     gameplay:
@@ -194,7 +194,7 @@ export const games: Game[] = [
     slug: 'helldivers-2',
     title: 'Helldivers 2',
     coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=1600&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80',
     genre: 'Multiplayer',
     genres: ['Multiplayer', 'Action'],
     platforms: ['PC', 'PlayStation'],
@@ -205,7 +205,7 @@ export const games: Game[] = [
     description:
       'A third-person cooperative extraction shooter built on relentless chaos, hilarious friendly fire, and a dynamic community-driven Galactic War.',
     overview:
-      'Enlist as a Helldiver and fight for Super Earth against swarms of Terminid insects and relentless Automaton legions. Helldivers 2 trades the top-down perspective of its predecessor for an over-the-shoulder tactical shooter built around heavy physics, strategic stratagem call-ins, and squad-dependent cooperative play.',
+      'Enlist as a Helldiver and fight for Super Earth against swarms of Terminid insects and relentless Automaton legions. Helldivers 2 trades the top-down perspective of its predecessor for an over-the-shoulder tactical shooter with heavy physics, strategic stratagems, and unforgettable cooperative moments.',
     gameplay:
       'Four-player squads drop into hostile alien planets to complete primary and secondary tactical objectives. Calling down orbital strikes, heavy artillery, and support weaponry requires memorizing keypad code sequences under extreme pressure, while always avoiding lethal friendly fire.',
     features: [
@@ -241,7 +241,7 @@ export const games: Game[] = [
     slug: 'balatro',
     title: 'Balatro',
     coverImage: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1627664220128-ff2232937726?auto=format&fit=crop&w=1600&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
     genre: 'Indie',
     genres: ['Indie', 'Strategy', 'Puzzle'],
     platforms: ['PC', 'PlayStation', 'Xbox', 'Nintendo', 'Mobile'],
@@ -269,8 +269,8 @@ export const games: Game[] = [
     performance:
       'Flawless 60+ FPS performance across every platform including low-power handhelds and mobile devices, with rapid load times and negligible battery drain.',
     pros: [
-      'Easy-to-learn loop with a high mechanical ceiling once Joker synergies click',
-      'Wide build variety driven by 150 Joker cards and their interactions',
+      'Sublimely addictive game loop that is easy to learn yet endlessly deep',
+      'Astonishing build variety and emergent numerical synergy',
       'Charming retro visual presentation with tactile card-handling feedback',
       'Perfect balance between calculated risk and tactical decision making'
     ],
@@ -288,7 +288,7 @@ export const games: Game[] = [
     slug: 'hades-2',
     title: 'Hades II',
     coverImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1716967318503-05b7064afa41?auto=format&fit=crop&w=1600&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1600&q=80',
     genre: 'Indie',
     genres: ['Indie', 'Action', 'RPG'],
     platforms: ['PC'],
@@ -317,9 +317,9 @@ export const games: Game[] = [
       'Polished and responsive even in Early Access, maintaining lockstep 60 to 120 FPS across modern hardware and portable PC handheld devices.',
     pros: [
       'Refined combat mechanics with the addition of the tactical Magick system',
-      'Hand-drawn visual presentation and distinct character designs',
-      'Substantial amount of content and routes already available in Early Access',
-      'Audio score that shifts dynamically with player combat momentum'
+      'Stunning hand-drawn visual presentation and evocative character designs',
+      'Substantial amount of content and routes available in early releases',
+      'Exceptional audio score that evolves alongside player combat momentum'
     ],
     cons: [
       'Early access status means balancing adjustments remain active',
@@ -333,8 +333,8 @@ export const games: Game[] = [
     id: 'manor-lords',
     slug: 'manor-lords',
     title: 'Manor Lords',
-    coverImage: 'https://images.unsplash.com/photo-1485236715568-ddc5ee6ca227?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1446104838475-bc6508184f08?auto=format&fit=crop&w=1600&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1600&q=80',
     genre: 'Strategy',
     genres: ['Strategy', 'Indie'],
     platforms: ['PC'],
@@ -362,7 +362,7 @@ export const games: Game[] = [
     performance:
       'Well-optimized for an early access title, supporting DLSS and FSR upscalers. CPU usage scales with late-game village populations.',
     pros: [
-      'Strong historical authenticity in its gridless, organic town layouts',
+      'Unrivaled historical authenticity and gorgeous organic town aesthetic',
       'Harmonious blend between peaceful economic building and tactical warfare',
       'Impressive visual fidelity powered by photogrammetry materials',
       'Engaging third-person exploration mode brings settlements to life'
@@ -391,7 +391,7 @@ export const games: Game[] = [
     description:
       'An open-world racing showcase set across vibrant Mexican biomes, delivering hundreds of cars, dynamic weather, and accessible driving physics.',
     overview:
-      'Playground Games crafts an expansive playground in Mexico, spanning active caldera volcanoes, dense jungle canopies, historic cities, and sweeping desert dunes. Forza Horizon 5 pairs a large vehicle roster with extensive accessibility options, including adjustable game speed and colorblind modes.',
+      'Playground Games crafts an expansive playground in Mexico, spanning active caldera volcanoes, dense jungle canopies, historic cities, and sweeping desert dunes. Forza Horizon 5 celebrates automotive passion with unmatched polish, accessibility options, and vehicle variety.',
     gameplay:
       'Whether participating in point-to-point road rallies, dirt trail expeditions, drift zones, or cross-country scrambles, vehicle handling bridges realistic weight physics with intuitive accessibility. The EventLab tool allows the community to build custom racetracks and mini-games.',
     features: [
@@ -408,7 +408,7 @@ export const games: Game[] = [
     performance:
       'Flawless 60 FPS performance modes on Xbox Series consoles, with robust PC scalability supporting ultrawide resolutions and high refresh rates.',
     pros: [
-      'Driving physics that stay approachable on a controller while rewarding wheel setups',
+      'Peerless driving mechanics that feel rewarding on controller and steering wheels',
       'Massive, diverse vehicle roster with deep customization depth',
       'Stunning environmental diversity and atmospheric weather storms',
       'Generous progression system that respects player time'
@@ -425,8 +425,8 @@ export const games: Game[] = [
     id: 'armored-core-vi',
     slug: 'armored-core-vi',
     title: 'Armored Core VI: Fires of Rubicon',
-    coverImage: 'https://images.unsplash.com/photo-1621164071312-67bb68821b3f?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1555618565-9f2b0323a10d?auto=format&fit=crop&w=1600&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1600&q=80',
     genre: 'Action',
     genres: ['Action', 'Strategy'],
     platforms: ['PC', 'PlayStation', 'Xbox'],
@@ -452,7 +452,7 @@ export const games: Game[] = [
     sound:
       'Industrial electronic soundtracks composed by Kota Hoshino, featuring distinct mechanical clanks, booster howls, and missile lock alarms.',
     performance:
-      'Well optimized on PC and modern consoles, sustaining 60 to 120 FPS with minimal frametime variance.',
+      'Exceptionally well optimized on PC and modern consoles, easily sustaining 60 to 120 FPS with minimal frametime variance.',
     pros: [
       'Incredible mechanical customizability with immediate battlefield impact',
       'Blistering, responsive combat that rewards deliberate spatial awareness',
@@ -471,8 +471,8 @@ export const games: Game[] = [
     id: 'the-legend-of-zelda-tears-of-the-kingdom',
     slug: 'the-legend-of-zelda-tears-of-the-kingdom',
     title: 'The Legend of Zelda: Tears of the Kingdom',
-    coverImage: 'https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1612036781124-847f8939b154?auto=format&fit=crop&w=1600&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
     genre: 'Adventure',
     genres: ['Adventure', 'Action', 'Puzzle'],
     platforms: ['Nintendo'],
@@ -481,9 +481,9 @@ export const games: Game[] = [
     publisher: 'Nintendo',
     rating: 9.7,
     description:
-      'A physics-driven open-world adventure that spans the kingdom of Hyrule across floating Sky Islands, the terrestrial surface, and the subterranean Depths.',
+      'An engineering and physics triumph that transforms the kingdom of Hyrule across floating Sky Islands, the terrestrial surface, and the subterranean Depths.',
     overview:
-      'Following the upheaval that shatters Hyrule, Link embarks on a quest to locate Princess Zelda and confront the resurrected Demon King. Tears of the Kingdom expands its predecessor\'s open-world sandbox into a triple-layered realm built around player-driven construction physics.',
+      'Following the upheaval that shatters Hyrule, Link embarks on a quest to locate Princess Zelda and confront the resurrected Demon King. Tears of the Kingdom expands its predecessor\'s open-world sandbox into a triple-layered realm governed by unprecedented player-crafted physics.',
     gameplay:
       'Abilities like Ultrahand, Fuse, Ascend, and Recall grant players unprecedented systemic agency. Ultrahand allows assembling Zonai contraptions ranging from hot-air balloons to walking siege mechs, while Fuse combines weapons with monster horns and elemental stones to craft tactical armaments.',
     features: [
@@ -500,7 +500,7 @@ export const games: Game[] = [
     performance:
       'Remarkably stable considering the intensive physics engine, holding close to 30 FPS at 900p docked, with minor frame drops occurring during complex Ultrahand rotations.',
     pros: [
-      'Ultrahand and Fuse building systems that support a wide range of player-designed solutions',
+      'Revolutionary physics and building systems that encourage limitless creativity',
       'Massive three-tiered world that rewards curiosity at every turn',
       'Superb puzzle design that embraces emergent player solutions',
       'Emotional and expansive main questline with memorable story beats'
@@ -517,8 +517,8 @@ export const games: Game[] = [
     id: 'final-fantasy-vii-rebirth',
     slug: 'final-fantasy-vii-rebirth',
     title: 'Final Fantasy VII Rebirth',
-    coverImage: 'https://images.unsplash.com/photo-1622297845775-5ff3fef71d13?auto=format&fit=crop&w=800&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1709587797077-7a2c94411514?auto=format&fit=crop&w=1600&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
+    heroImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=80',
     genre: 'RPG',
     genres: ['RPG', 'Action', 'Adventure'],
     platforms: ['PlayStation'],
@@ -527,7 +527,7 @@ export const games: Game[] = [
     publisher: 'Square Enix',
     rating: 9.3,
     description:
-      'Cloud and company leave Midgar for the wider world of Gaia, spanning six open regions with strategic synergy combat and the Queen\'s Blood card minigame.',
+      'Cloud and company escape Midgar into a sprawling planet, offering vast regional exploration, strategic synergy combat, and the acclaimed Queen\'s Blood minigame.',
     overview:
       'The second installment in the Final Fantasy VII remake project expands beyond the industrial metropolis of Midgar into the lush grasslands, coastal resorts, and rugged mountains of Gaia. Rebirth expands classic character arcs while introducing strategic open-world discovery.',
     gameplay:
@@ -540,7 +540,7 @@ export const games: Game[] = [
       'Chocobo breeding, regional exploration traversal, and extensive Gold Saucer minigames'
     ],
     graphics:
-      'High-detail character models and wide panoramic vistas bring classic PS1-era locations to life with modern fidelity and cinematic lighting.',
+      'High-detail character models and breathtaking panoramic vistas bring classic PS1 locations to life with modern fidelity and vibrant cinematic lighting.',
     sound:
       'A mammoth 400-track orchestral soundtrack reimagines Nobuo Uematsu\'s legendary compositions across varied genres from jazz to heavy metal.',
     performance:
@@ -549,7 +549,7 @@ export const games: Game[] = [
       'Brilliant hybrid action-tactical combat system with deep party synergy',
       'Heartfelt character interactions and expanded story moments',
       'Queen\'s Blood is one of the finest minigames in modern RPG history',
-      'A roughly 400-track orchestral soundtrack that reinterprets the original score across multiple genres'
+      'Astonishingly lavish soundtrack that elevates every emotional beat'
     ],
     cons: [
       'Performance mode soft image resolution at initial release (improved via patch)',

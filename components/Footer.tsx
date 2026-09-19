@@ -3,8 +3,6 @@ import Link from 'next/link';
 import { Activity, ShieldCheck, Mail, Sparkles } from 'lucide-react';
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="bg-surface border-t border-surface-border mt-20 pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,11 +72,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/authors" className="text-slate-400 hover:text-pulse transition-colors">
-                  Authors & Contributors
-                </Link>
-              </li>
-              <li>
                 <Link href="/editorial-policy" className="text-slate-400 hover:text-pulse transition-colors">
                   Editorial Policy & Ethics
                 </Link>
@@ -121,7 +114,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {currentYear} GamersPulse. All rights reserved.</p>
+          <p>© 2026 GamersPulse. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Domain: <strong className="text-slate-400 font-mono">gamerspulse.site</strong></span>
             <span>•</span>

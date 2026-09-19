@@ -8,9 +8,6 @@ export const metadata: Metadata = {
   title: 'Terms & Conditions — GamersPulse',
   description:
     'Read the terms of use, intellectual property policies, and legal disclaimers governing the GamersPulse website.',
-  alternates: {
-    canonical: '/terms-and-conditions',
-  },
   openGraph: {
     title: 'Terms & Conditions | GamersPulse',
     description:

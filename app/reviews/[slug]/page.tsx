@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getAllReviews, getReviewBySlug, getGameBySlug, getRelatedGames } from '@/lib/data';
-import { getAuthorByName } from '@/data/authors';
 import { RatingBadge } from '@/components/RatingBadge';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ShareButtons } from '@/components/ShareButtons';
@@ -44,9 +43,6 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: `${review.gameTitle} Review — GamersPulse Score: ${review.score}/10`,
     description: review.summary,
-    alternates: {
-      canonical: `/reviews/${review.slug}`,
-    },
     openGraph: {
       title: `${review.gameTitle} Review | GamersPulse`,
       description: review.summary,
@@ -63,7 +59,6 @@ export default function ReviewDetailPage({ params }: Props) {
   }
 
   const associatedGame = getGameBySlug(review.gameSlug);
-  const authorProfile = getAuthorByName(review.author.name);
   const relatedGames = associatedGame
     ? getRelatedGames(associatedGame.relatedGameSlugs).slice(0, 3)
     : [];
@@ -130,14 +125,7 @@ export default function ReviewDetailPage({ params }: Props) {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5 text-slate-200 font-semibold">
               <User className="w-4 h-4 text-pulse" />
-              {authorProfile ? (
-                <Link href={`/authors/${authorProfile.slug}`} className="hover:text-pulse hover:underline">
-                  {review.author.name}
-                </Link>
-              ) : (
-                review.author.name
-              )}{' '}
-              ({review.author.role})
+              {review.author.name} ({review.author.role})
             </span>
             <span>•</span>
             <span className="flex items-center gap-1.5">
@@ -323,15 +311,7 @@ export default function ReviewDetailPage({ params }: Props) {
 
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
             <span>
-              Reviewed by{' '}
-              {authorProfile ? (
-                <Link href={`/authors/${authorProfile.slug}`} className="font-bold text-pulse hover:underline">
-                  {review.author.name}
-                </Link>
-              ) : (
-                <strong>{review.author.name}</strong>
-              )}{' '}
-              • Evaluated under our{' '}
+              Reviewed by <strong>{review.author.name}</strong> • Evaluated under our{' '}
               <Link href="/editorial-policy#reviews" className="text-pulse underline">
                 Review Methodology
               </Link>
