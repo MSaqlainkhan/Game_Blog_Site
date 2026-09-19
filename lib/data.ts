@@ -3,6 +3,7 @@ import { reviews } from '@/data/reviews';
 import { newsArticles } from '@/data/news';
 import { guides } from '@/data/guides';
 import { getCategoriesWithCounts } from '@/data/categories';
+import { getAllAuthors, getAuthorBySlug as getAuthorProfileBySlug } from '@/data/authors';
 import { Game, Review, NewsArticle, Guide, CategoryInfo, GameGenre, Platform } from '@/types';
 
 export function getAllGames(): Game[] {
@@ -59,6 +60,35 @@ export function getLatestGuides(limit = 4): Guide[] {
 
 export function getAllCategories(): CategoryInfo[] {
   return getCategoriesWithCounts();
+}
+
+export function getAuthorArchive(authorName: string) {
+  return {
+    reviews: reviews.filter((r) => r.author.name === authorName),
+    guides: guides.filter((g) => g.author.name === authorName),
+    news: newsArticles.filter((n) => n.author.name === authorName)
+  };
+}
+
+export function getAuthorProfileWithStats(slug: string) {
+  const profile = getAuthorProfileBySlug(slug);
+  if (!profile) return undefined;
+  const archive = getAuthorArchive(profile.name);
+  return {
+    profile,
+    archive,
+    totalArticles: archive.reviews.length + archive.guides.length + archive.news.length
+  };
+}
+
+export function getAllAuthorsWithCounts() {
+  return getAllAuthors().map((profile) => {
+    const archive = getAuthorArchive(profile.name);
+    return {
+      profile,
+      totalArticles: archive.reviews.length + archive.guides.length + archive.news.length
+    };
+  });
 }
 
 export interface SearchResultItem {
