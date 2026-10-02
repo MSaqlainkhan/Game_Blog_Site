@@ -7,13 +7,11 @@ export const reviews: Review[] = [
     gameSlug: 'elden-ring-shadow-of-the-erdtree',
     gameTitle: 'Elden Ring: Shadow of the Erdtree',
     coverImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Elden Ring: Shadow of the Erdtree',
     genre: 'Action',
     platforms: ['PC', 'PlayStation', 'Xbox'],
     score: 9.6,
-    author: {
-      name: 'Marcus Vance',
-      role: 'Senior Editorial Reviewer'
-    },
+    authorId: 'gamerspulse-editorial',
     publishedAt: 'June 27, 2024',
     updatedAt: 'July 5, 2024',
     summary:
@@ -57,13 +55,11 @@ export const reviews: Review[] = [
     gameSlug: 'cyberpunk-2077-phantom-liberty',
     gameTitle: 'Cyberpunk 2077: Phantom Liberty',
     coverImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Cyberpunk 2077: Phantom Liberty',
     genre: 'RPG',
     platforms: ['PC', 'PlayStation', 'Xbox'],
     score: 9.3,
-    author: {
-      name: 'Elena Rostova',
-      role: 'Lead RPG Critic'
-    },
+    authorId: 'gamerspulse-editorial',
     publishedAt: 'October 3, 2023',
     summary:
       'Phantom Liberty delivers a gripping espionage thriller within the walled district of Dogtown. Combined with the transformative 2.0 system overhaul, it represents the definitive realization of Night City’s promise.',
@@ -106,13 +102,11 @@ export const reviews: Review[] = [
     gameSlug: 'baldurs-gate-3',
     gameTitle: "Baldur's Gate 3",
     coverImage: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: "Illustrative gaming photograph for Baldur's Gate 3",
     genre: 'RPG',
     platforms: ['PC', 'PlayStation', 'Xbox'],
     score: 9.8,
-    author: {
-      name: 'Elena Rostova',
-      role: 'Lead RPG Critic'
-    },
+    authorId: 'gamerspulse-editorial',
     publishedAt: 'August 18, 2023',
     updatedAt: 'December 1, 2023',
     summary:
@@ -156,13 +150,11 @@ export const reviews: Review[] = [
     gameSlug: 'alan-wake-2',
     gameTitle: 'Alan Wake 2',
     coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Alan Wake 2',
     genre: 'Horror',
     platforms: ['PC', 'PlayStation', 'Xbox'],
     score: 9.4,
-    author: {
-      name: 'Marcus Vance',
-      role: 'Senior Editorial Reviewer'
-    },
+    authorId: 'gamerspulse-editorial',
     publishedAt: 'November 4, 2023',
     summary:
       'Alan Wake 2 is an audaciously inventive survival horror experience that daringly blends live-action film, meta-narrative detective work, and oppressive atmospheric dread.',
@@ -205,13 +197,11 @@ export const reviews: Review[] = [
     gameSlug: 'helldivers-2',
     gameTitle: 'Helldivers 2',
     coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Helldivers 2',
     genre: 'Multiplayer',
     platforms: ['PC', 'PlayStation'],
     score: 8.9,
-    author: {
-      name: 'Julian Hayes',
-      role: 'Hardware & Tech Editor'
-    },
+    authorId: 'gamerspulse-editorial',
     publishedAt: 'March 1, 2024',
     summary:
       'Helldivers 2 is an intoxicating cooperative tactical shooter that blends cinematic warfare with chaotic slapstick emergent comedy and a captivating community-driven galactic war.',
@@ -254,13 +244,11 @@ export const reviews: Review[] = [
     gameSlug: 'balatro',
     gameTitle: 'Balatro',
     coverImage: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Balatro',
     genre: 'Indie',
     platforms: ['PC', 'PlayStation', 'Xbox', 'Nintendo', 'Mobile'],
     score: 9.5,
-    author: {
-      name: 'Julian Hayes',
-      role: 'Hardware & Tech Editor'
-    },
+    authorId: 'gamerspulse-editorial',
     publishedAt: 'March 14, 2024',
     summary:
       'Balatro is a sublime, dangerously addictive poker roguelike that transforms the simple rules of traditional card play into an electrifying playground of mathematical cascades and Joker synergies.',

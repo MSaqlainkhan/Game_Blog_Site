@@ -1,107 +1,60 @@
-'use client';
+import Link from 'next/link';
+import { Rss } from 'lucide-react';
 
-import React, { useState } from 'react';
-import { Mail, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
 
-interface NewsletterProps {
-  className?: string;
-}
-
-export function Newsletter({ className = '' }: NewsletterProps) {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage('');
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-      setStatus('error');
-      setErrorMessage('Please enter a valid email address.');
-      return;
-    }
-
-    setStatus('loading');
-
-    // Simulate realistic validation delay
-    setTimeout(() => {
-      setStatus('success');
-      setEmail('');
-    }, 600);
-  };
-
+/**
+ * Reader sign-up panel.
+ *
+ * This deliberately does not present an email capture form. There is no mailing
+ * list provider connected to this deployment, and the previous version
+ * "succeeded" after a simulated delay while telling the reader the subscription
+ * had been processed. Claiming a subscription that was never stored is
+ * misleading, so the panel instead offers the channels that genuinely work:
+ * the RSS feed, and email for anything that needs a reply.
+ *
+ * If a real provider is connected later, restore a form here — but only once
+ * addresses are actually stored.
+ */
+export function Newsletter({ className = '' }: { className?: string }) {
   return (
     <section
-      aria-label="Newsletter Subscription"
-      className={`relative overflow-hidden rounded-3xl bg-gradient-to-b from-surface-elevated to-surface border border-surface-border p-8 md:p-12 ${className}`}
+      aria-labelledby="stay-in-the-game"
+      className={`border border-surface-border bg-canvas p-6 md:p-8 ${className}`}
     >
-      {/* Background glow effects */}
-      <div className="absolute -top-24 -right-24 w-72 h-72 bg-pulse/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-pulse/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="mx-auto max-w-[560px] text-center">
+        <span className="kicker block text-ink-faint">Follow GamersPulse</span>
 
-      <div className="relative z-10 max-w-2xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-pulse/10 text-pulse border border-pulse/30 mb-4">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Curated Gaming Dispatch</span>
-        </div>
-
-        <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight mb-3">
-          Stay in the Game
+        <h2
+          id="stay-in-the-game"
+          className="mt-1 font-serif text-headline-md font-semibold text-ink md:text-headline-lg"
+        >
+          Stay in the game
         </h2>
 
-        <p className="text-sm md:text-base text-slate-300 mb-8 leading-relaxed">
-          Get gaming news, honest reviews, actionable guides and discovery recommendations delivered with editorial integrity.
+        <p className="mt-2 text-body-default leading-relaxed text-ink-muted">
+          New coverage lands on the site as it is published. Subscribe to the feed in your reader, or
+          email the desk if you want to tell us about something we should be writing about.
         </p>
 
-        {status === 'success' ? (
-          <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 flex items-center justify-center gap-3 animate-in fade-in duration-300">
-            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-            <div className="text-left text-sm">
-              <strong className="block font-bold">Thank you for your interest!</strong>
-              <span>
-                Your request has been simulated on this frontend demonstration. When public newsletter dispatch connects, subscribers will receive our weekly digest.
-              </span>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <div className="relative flex-grow">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (status === 'error') setStatus('idle');
-                }}
-                placeholder="Enter your email address..."
-                aria-label="Email address"
-                required
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-subtle border border-surface-border text-white placeholder-slate-400 text-sm focus:outline-none focus:border-pulse focus:ring-1 focus:ring-pulse transition-colors"
-              />
-            </div>
+        <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a
+            href="/feed.xml"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 bg-ink px-4 text-body-compact font-semibold text-white transition-colors hover:bg-accent sm:w-auto"
+          >
+            <Rss aria-hidden="true" className="h-4 w-4" />
+            Subscribe via RSS
+          </a>
 
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className="px-6 py-3 rounded-xl bg-pulse hover:bg-pulse-hover text-background font-bold text-sm transition-all duration-200 shadow-pulse-glow disabled:opacity-50 shrink-0"
-            >
-              {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
-            </button>
-          </form>
-        )}
+          <Link
+            href="/contact"
+            className="inline-flex h-10 w-full items-center justify-center border border-surface-border bg-white px-4 text-body-compact font-semibold text-ink transition-colors hover:border-ink-faint hover:bg-white sm:w-auto"
+          >
+            Contact the desk
+          </Link>
+        </div>
 
-        {status === 'error' && (
-          <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-rose-400">
-            <AlertCircle className="w-3.5 h-3.5" />
-            <span>{errorMessage}</span>
-          </div>
-        )}
-
-        <p className="mt-4 text-[11px] text-slate-500">
-          No spam, no tracking pixels. Unsubscribe anytime. Independent gaming journalism since 2024.
+        <p className="meta-stamp mt-4 text-ink-faint">
+          No tracking pixels. Unsubscribe at any time.
         </p>
       </div>
     </section>

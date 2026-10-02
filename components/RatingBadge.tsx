@@ -8,34 +8,26 @@ interface RatingBadgeProps {
 
 export function RatingBadge({ score, size = 'md', showLabel = false }: RatingBadgeProps) {
   const sizeClasses = {
-    sm: 'text-xs px-2 py-0.5 font-bold',
-    md: 'text-sm px-2.5 py-1 font-extrabold',
-    lg: 'text-2xl px-4 py-2 font-black tracking-tight',
+    sm: 'text-[12px] px-1.5 py-0.5 font-semibold',
+    md: 'text-[15px] px-2.5 py-1 font-semibold',
+    lg: 'text-3xl px-3 py-1.5 font-semibold tracking-tight',
   };
 
-  // Tier color styling
-  let colorStyle = 'border-pulse/40 bg-pulse/10 text-pulse';
-  if (score >= 9.5) {
-    colorStyle = 'border-cyan-400 bg-cyan-950/60 text-cyan-300 shadow-pulse-glow';
-  } else if (score >= 9.0) {
-    colorStyle = 'border-teal-400 bg-teal-950/60 text-teal-300';
-  } else if (score >= 8.0) {
-    colorStyle = 'border-sky-400 bg-sky-950/60 text-sky-300';
-  } else {
-    colorStyle = 'border-amber-400 bg-amber-950/60 text-amber-300';
-  }
+  // Square badge: 4px radius, accent tint fill, fine accent border.
+  const tone = 'bg-accent-tint border-accent text-accent-hover font-serif';
 
   return (
     <div className="inline-flex items-center gap-1.5">
       <div
-        className={`inline-flex items-center justify-center rounded-lg border backdrop-blur-sm ${sizeClasses[size]} ${colorStyle}`}
+        className={`inline-flex items-center justify-center rounded border ${sizeClasses[size]} ${tone}`}
         title={`GamersPulse Rating: ${score.toFixed(1)} / 10`}
       >
         <span>{score.toFixed(1)}</span>
+        {size !== 'sm' && <span className="font-sans text-[11px] font-medium text-ink-muted">/ 10</span>}
       </div>
       {showLabel && (
-        <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
-          Pulse Score
+        <span className="kicker text-ink-faint">
+          GamersPulse Score
         </span>
       )}
     </div>

@@ -18,19 +18,19 @@ export function EmptyState({
   resetHref
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-surface-border bg-surface/50 my-8">
-      <div className="w-14 h-14 rounded-full bg-surface-subtle border border-surface-border flex items-center justify-center text-slate-400 mb-4">
-        <SearchX className="w-7 h-7 text-pulse" />
+    <div className="flex flex-col items-center justify-center p-12 text-center bg-canvas border border-surface-border my-8">
+      <div className="w-12 h-12 rounded-full bg-accent-tint border border-outline-variant flex items-center justify-center mb-4">
+        <SearchX className="w-5 h-5 text-accent" />
       </div>
-      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-      <p className="text-sm text-slate-400 max-w-md mb-6 leading-relaxed">
+      <h3 className="font-serif text-2xl font-semibold text-ink mb-2">{title}</h3>
+      <p className="text-body-default text-ink-muted max-w-md mb-6 leading-relaxed">
         {description}
       </p>
 
       {resetHref && (
         <Link
           href={resetHref}
-          className="inline-flex items-center px-4 py-2 rounded-lg bg-pulse text-background font-bold text-sm hover:bg-pulse-hover transition-colors shadow-pulse-glow"
+          className="inline-flex items-center px-4 h-10 bg-ink text-white text-body-compact font-semibold hover:bg-accent transition-colors"
         >
           {resetActionText || 'View All Items'}
         </Link>
@@ -38,8 +38,9 @@ export function EmptyState({
 
       {onReset && (
         <button
+          type="button"
           onClick={onReset}
-          className="inline-flex items-center px-4 py-2 rounded-lg bg-pulse text-background font-bold text-sm hover:bg-pulse-hover transition-colors shadow-pulse-glow"
+          className="inline-flex items-center px-4 h-10 bg-ink text-white text-body-compact font-semibold hover:bg-accent transition-colors"
         >
           {resetActionText || 'Reset Filters'}
         </button>

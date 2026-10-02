@@ -1,299 +1,437 @@
-import React from 'react';
-import Link from 'next/link';
+import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+
+import { AdSlot } from '@/components/AdSlot';
+import { CategoryCard } from '@/components/CategoryCard';
+import { GameCard } from '@/components/GameCard';
+import { GuideCard } from '@/components/GuideCard';
+import { Newsletter } from '@/components/Newsletter';
+import { ReviewCard } from '@/components/ReviewCard';
+import { SectionHeader } from '@/components/SectionHeader';
 import {
   getAllGames,
   getAllReviews,
-  getAllNews,
-  getAllGuides,
-  getAllCategories
+  getAuthorFor,
+  getGenresWithCounts,
+  getGuideBySlug,
+  getLatestGuides,
+  getLatestNews,
+  getReviewForGame,
 } from '@/lib/data';
-import { SectionHeader } from '@/components/SectionHeader';
-import { GameCard } from '@/components/GameCard';
-import { ReviewCard } from '@/components/ReviewCard';
-import { NewsCard } from '@/components/NewsCard';
-import { GuideCard } from '@/components/GuideCard';
-import { CategoryCard } from '@/components/CategoryCard';
-import { Newsletter } from '@/components/Newsletter';
-import { AdSlot } from '@/components/AdSlot';
-import { ArrowRight, Clock, Calendar, Sparkles, TrendingUp, Compass } from 'lucide-react';
+import { buildPageMetadata, jsonLd } from '@/lib/seo';
+import { absoluteUrl, formatDate } from '@/lib/site';
+import type { Game, Guide, NewsArticle, Review } from '@/types';
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'GamersPulse — Gaming News, Reviews & Guides',
+  description:
+    'Independent gaming coverage: news and analysis on PC, PlayStation, Xbox and Nintendo, reviews written by people who played the game, and guides you can actually follow.',
+  path: '/',
+});
 
 export default function HomePage() {
-  const allGames = getAllGames();
-  const allReviews = getAllReviews();
-  const allNews = getAllNews();
-  const allGuides = getAllGuides();
-  const allCategories = getAllCategories();
+  const news = getLatestNews(6);
+  const lead: NewsArticle | undefined = news[0];
+  const secondary = news.slice(1);
+  const reviews = getAllReviews().slice(0, 3);
+  const guides = getLatestGuides(4);
+  const genres = getGenresWithCounts();
 
-  // Featured Hero Story (top news/editorial)
-  const heroStory = allNews[0];
-
-  // Trending Now items (mix of acclaimed games and hot guides)
-  const trendingItems = [
-    {
-      type: 'Game',
-      title: allGames[0].title,
-      summary: allGames[0].description,
-      image: allGames[0].coverImage,
-      category: allGames[0].genre,
-      url: `/games/${allGames[0].slug}`,
-      badge: '9.6 Rating',
-    },
-    {
-      type: 'Guide',
-      title: allGuides[0].title,
-      summary: allGuides[0].summary,
-      image: allGuides[0].heroImage,
-      category: allGuides[0].category,
-      url: `/guides/${allGuides[0].slug}`,
-      badge: allGuides[0].readTime,
-    },
-    {
-      type: 'Review',
-      title: `${allReviews[2].gameTitle} Review`,
-      summary: allReviews[2].summary,
-      image: allReviews[2].coverImage,
-      category: '9.8 Masterpiece',
-      url: `/reviews/${allReviews[2].slug}`,
-      badge: 'Score: 9.8',
-    },
-    {
-      type: 'News',
-      title: allNews[1].title,
-      summary: allNews[1].summary,
-      image: allNews[1].heroImage,
-      category: allNews[1].category,
-      url: `/news/${allNews[1].slug}`,
-      badge: allNews[1].readTime,
-    },
-  ];
-
-  // News section: 1 featured + 4 smaller
-  const featuredNews = allNews[0];
-  const secondaryNews = allNews.slice(1, 5);
+  const spotlight = gamesForSpotlight();
 
   return (
-    <div className="space-y-16 md:space-y-24">
-      {/* 1. HERO SECTION */}
-      <section className="relative pt-6 pb-12 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-3xl bg-surface border border-surface-border overflow-hidden shadow-2xl">
-            {/* Background Hero Image */}
-            <div className="relative w-full aspect-[16/9] md:aspect-[21/9] min-h-[380px] md:min-h-[520px]">
-              <Image
-                src={heroStory.heroImage}
-                alt={heroStory.title}
-                fill
-                priority
-                sizes="(max-width: 1280px) 100vw, 1280px"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent" />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(homepageItemListJsonLd([...(lead ? [lead] : []), ...secondary])),
+        }}
+      />
 
-              {/* Overlay Content */}
-              <div className="absolute inset-0 p-6 sm:p-10 md:p-14 flex flex-col justify-end max-w-3xl">
-                <div className="flex flex-wrap items-center gap-3 text-xs md:text-sm text-slate-300 mb-3">
-                  <span className="px-3 py-1 rounded-full bg-pulse text-background font-black uppercase tracking-wider text-xs shadow-pulse-glow">
-                    {heroStory.category}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-slate-300">
-                    <Calendar className="w-4 h-4 text-pulse" />
-                    {heroStory.publishedAt}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-slate-300">
-                    <Clock className="w-4 h-4 text-pulse" />
-                    {heroStory.readTime}
-                  </span>
-                </div>
+      <div className="editorial-container py-8 md:py-10">
+        {lead ? <FeaturedStory article={lead} /> : null}
 
-                <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-                  {heroStory.title}
-                </h1>
+        {/* Ad: after the lead editorial section */}
+        <AdSlot name="homeAfterLead" className="mt-10" />
 
-                <p className="text-sm md:text-base text-slate-300 line-clamp-3 md:line-clamp-2 mb-6 leading-relaxed">
-                  {heroStory.summary}
-                </p>
+        {spotlight.length > 0 ? (
+          <section aria-labelledby="spotlight" className="mt-10">
+            <SectionHeader
+              badge="In focus"
+              id="spotlight"
+              title="In the spotlight"
+              description="Reviews, guides and coverage for the games we are following."
+              viewAllHref="/games"
+              viewAllText="Browse all games"
+            />
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {spotlight.map((entry) => (
+                <li key={entry.game.slug}>
+                  <SpotlightCard game={entry.game} review={entry.review} guide={entry.guide} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
-                <div className="flex flex-wrap items-center gap-4">
-                  <Link
-                    href={`/news/${heroStory.slug}`}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-pulse text-background font-bold text-sm hover:bg-pulse-hover transition-all duration-200 shadow-pulse-glow"
-                  >
-                    <span>Read Article</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-
-                  <Link
-                    href="/games"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-surface-subtle/80 hover:bg-surface border border-surface-border hover:border-pulse/40 text-white font-bold text-sm transition-all duration-200"
-                  >
-                    <Compass className="w-4 h-4 text-pulse" />
-                    <span>Explore Games</span>
-                  </Link>
-                </div>
-              </div>
+        {secondary.length > 0 ? (
+          <section aria-labelledby="latest-news" className="mt-12">
+            <SectionHeader
+              badge="Journalism & tech"
+              id="latest-news"
+              title="Latest gaming news"
+              description="Reporting on engines and hardware, platform shifts, and design decisions that affect how games play."
+              viewAllHref="/news"
+              viewAllText="More news"
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {secondary.map((article) => (
+                <LatestNewsRow key={article.slug} article={article} />
+              ))}
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        ) : null}
 
-      {/* 2. TRENDING NOW */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          badge="In The Spotlight"
-          title="Trending Now"
-          description="High-interest gaming stories, landmark release guides, and critical review scores."
-        />
+        {/* Ad: between major editorial sections */}
+        <AdSlot name="homeMidFeed" className="mt-12" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {trendingItems.map((item, idx) => (
-            <Link
-              key={idx}
-              href={item.url}
-              className="group relative flex flex-col rounded-2xl bg-surface border border-surface-border overflow-hidden hover:border-pulse/40 transition-all duration-300 hover:shadow-card hover:-translate-y-1"
-            >
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-subtle">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
-                <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-background/80 text-pulse border border-pulse/30 backdrop-blur-md">
-                    {item.category}
-                  </span>
-                </div>
-                <div className="absolute bottom-2 right-2">
-                  <span className="px-2 py-0.5 rounded bg-surface/80 border border-surface-border text-[11px] font-mono text-slate-300 backdrop-blur-sm">
-                    {item.badge}
-                  </span>
-                </div>
-              </div>
+        {genres.length > 0 ? (
+          <section aria-labelledby="explore-by-genre" className="mt-12">
+            <SectionHeader
+              badge="Game discovery"
+              id="explore-by-genre"
+              title="Explore games by genre"
+              description="Browse the catalogue by the kind of game you want to play next."
+              viewAllHref="/games"
+              viewAllText="Full catalogue"
+            />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {genres.map((genre) => (
+                <CategoryCard key={genre.slug} category={genre} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-              <div className="p-4 flex flex-col flex-grow">
-                <span className="text-[11px] font-bold text-pulse uppercase tracking-wider mb-1">
-                  {item.type}
-                </span>
-                <h3 className="text-sm md:text-base font-bold text-white group-hover:text-pulse transition-colors line-clamp-2 mb-2 leading-snug">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed flex-grow">
-                  {item.summary}
-                </p>
-                <div className="flex items-center gap-1 text-xs font-semibold text-pulse mt-3 pt-2 border-t border-surface-border/60">
-                  <span>View content</span>
-                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ADVERTISING READINESS CONTAINER 1 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <AdSlot format="horizontal" slotId="home-leaderboard-top" />
-      </div>
-
-      {/* 3. EXPLORE GAMES BY GENRE */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          badge="Game Discovery"
-          title="Explore Games by Genre"
-          description="Browse our curated index across varied game mechanics, from tactical roleplaying epics to cozy deckbuilders."
-          viewAllHref="/games"
-          viewAllText="View Full Catalog"
-        />
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {allCategories.map((cat) => (
-            <CategoryCard key={cat.id} category={cat} />
-          ))}
-        </div>
-      </section>
-
-      {/* 4. FEATURED GAMES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          badge="Curated Index"
-          title="Featured Games"
-          description="Hand-picked modern titles with exceptional gameplay mechanics, technical ambition, and high critical acclaim."
-          viewAllHref="/games"
-          viewAllText="Browse All Games"
-        />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allGames.slice(0, 6).map((game) => (
-            <GameCard key={game.id} game={game} />
-          ))}
-        </div>
-      </section>
-
-      {/* 5. LATEST GAMING NEWS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          badge="Journalism & Tech"
-          title="Latest Gaming News & Analysis"
-          description="Thoughtful coverage of engine architecture, portable hardware shifts, and player-first game design."
-          viewAllHref="/news"
-          viewAllText="More News"
-        />
-
-        <div className="space-y-8">
-          {/* Featured Large Article */}
-          <NewsCard article={featuredNews} featured />
-
-          {/* 4 Smaller Articles */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {secondaryNews.map((article) => (
-              <NewsCard key={article.id} article={article} />
+        <section aria-labelledby="featured-games" className="mt-12">
+          <SectionHeader
+            badge="Curated index"
+            id="featured-games"
+            title="Featured games"
+            description="Titles with strong critical reception and genuinely interesting systems."
+            viewAllHref="/games"
+            viewAllText="Browse all games"
+          />
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+            {spotlight.slice(0, 6).map((entry) => (
+              <GameCard key={entry.game.slug} game={entry.game} showScore />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 6. LATEST REVIEWS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          badge="Editorial Verdicts"
-          title="Latest Game Reviews"
-          description="Uncompromised evaluations measuring gameplay loops, performance stability, and overall value."
-          viewAllHref="/reviews"
-          viewAllText="All Reviews"
-        />
+        {reviews.length > 0 ? (
+          <section aria-labelledby="latest-reviews" className="mt-12">
+            <SectionHeader
+              badge="Editorial verdicts"
+              id="latest-reviews"
+              title="Latest reviews"
+              description="Scores are earned, not averaged. We state what worked and what did not."
+              viewAllHref="/reviews"
+              viewAllText="All reviews"
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {reviews.map((review) => (
+                <ReviewCard key={review.slug} review={review} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allReviews.slice(0, 3).map((review) => (
-            <ReviewCard key={review.id} review={review} />
-          ))}
-        </div>
-      </section>
+        {guides.length > 0 ? (
+          <section aria-labelledby="latest-guides" className="mt-12">
+            <SectionHeader
+              badge="Level up your game"
+              id="latest-guides"
+              title="Actionable gaming guides"
+              description="Builds, walkthroughs and mechanics breakdowns written to be followed."
+              viewAllHref="/guides"
+              viewAllText="Explore all guides"
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {guides.map((guide) => (
+                <GuideCard key={guide.slug} guide={guide} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {/* 7. GAMING GUIDES (LEVEL UP YOUR GAME) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          badge="Level Up Your Game"
-          title="Actionable Gaming Guides"
-          description="In-depth build optimization, boss survival tactics, and mathematical breakdowns to conquer your games."
-          viewAllHref="/guides"
-          viewAllText="Explore All Guides"
-        />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allGuides.slice(0, 6).map((guide) => (
-            <GuideCard key={guide.id} guide={guide} />
-          ))}
-        </div>
-      </section>
-
-      {/* 8. NEWSLETTER SECTION */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Newsletter />
+        <Newsletter className="mt-12" />
       </div>
-    </div>
+    </>
   );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Lead story                                                                 */
+/* -------------------------------------------------------------------------- */
+
+function FeaturedStory({ article }: { article: NewsArticle }) {
+  const author = getAuthorFor(article.authorId);
+
+  return (
+    <section aria-labelledby="featured-story" className="border-b border-surface-border pb-10">
+      <h2 id="featured-story" className="kicker mb-4 text-accent">
+        Featured story
+      </h2>
+
+      <div className="grid grid-cols-1 items-start gap-gutter-desktop lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <Link
+            href={`/news/${article.slug}`}
+            tabIndex={-1}
+            aria-hidden="true"
+            className="relative block aspect-[16/9] w-full overflow-hidden rounded-lg bg-surface-low"
+          >
+            <Image
+              src={article.heroImage}
+              alt={article.imageAlt}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              className="object-cover"
+            />
+          </Link>
+        </div>
+
+        <div className="lg:col-span-5">
+          <Link
+            href={`/news/${article.slug}`}
+            className="kicker border border-accent/30 bg-accent-tint px-2 py-0.5 text-accent-hover"
+          >
+            {article.category}
+          </Link>
+
+          {/* The lead headline is the page's single top-level heading. */}
+          <h1 className="mt-3 font-serif text-headline-md font-semibold leading-tight tracking-tight text-ink md:text-display-hero">
+            <Link
+              href={`/news/${article.slug}`}
+              className="transition-colors hover:text-accent-hover"
+            >
+              {article.title}
+            </Link>
+          </h1>
+
+          <p className="mt-4 text-body-default leading-relaxed text-ink-muted">
+            {article.summary}
+          </p>
+
+          <div className="mt-5 border-t border-surface-border pt-4">
+            <p className="meta-stamp text-ink">
+              By{' '}
+              <Link
+                href={`/authors/${author.slug}`}
+                className="font-medium underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+              >
+                {author.name}
+              </Link>
+            </p>
+
+            <dl className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 meta-stamp text-ink-muted">
+              <dt className="sr-only">Publication date</dt>
+              <dd>
+                <time dateTime={article.publishedAt}>
+                  {formatDate(article.publishedAt)}
+                </time>
+              </dd>
+
+              {article.updatedAt ? (
+                <>
+                  <dt className="sr-only">Last updated</dt>
+                  <dd aria-hidden="true">·</dd>
+                  <dd>
+                    Updated{' '}
+                    <time dateTime={article.updatedAt}>
+                      {formatDate(article.updatedAt)}
+                    </time>
+                  </dd>
+                </>
+              ) : null}
+
+              <dt className="sr-only">Reading time</dt>
+              <dd aria-hidden="true">·</dd>
+              <dd>{article.readTime}</dd>
+            </dl>
+
+            <Link
+              href={`/news/${article.slug}`}
+              className="mt-5 inline-flex items-center gap-2 bg-ink px-4 py-2 text-body-compact font-medium text-white transition-colors hover:bg-accent"
+            >
+              Read the story
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Latest news                                                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Newspaper-style row: image beside a headline, rather than a large floating
+ * card. Headlines and readability are prioritised over card effects.
+ */
+function LatestNewsRow({ article }: { article: NewsArticle }) {
+  return (
+    <article className="group flex gap-4 border-b border-surface-border pb-4">
+      <Link
+        href={`/news/${article.slug}`}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="relative hidden aspect-[4/3] w-32 shrink-0 overflow-hidden rounded bg-surface-low sm:block"
+      >
+        <Image
+          src={article.heroImage}
+          alt={article.imageAlt}
+          fill
+          sizes="128px"
+          className="object-cover"
+        />
+      </Link>
+
+      <div className="min-w-0">
+        <p className="meta-stamp flex flex-wrap items-center gap-1.5 text-ink-faint">
+          <span className="font-semibold uppercase tracking-label text-accent-hover">
+            {article.category}
+          </span>
+          <span aria-hidden="true">·</span>
+          <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+        </p>
+
+        <h3 className="mt-1 font-serif text-[19px] font-medium leading-snug text-ink">
+          <Link
+            href={`/news/${article.slug}`}
+            className="transition-colors hover:text-accent-hover"
+          >
+            {article.title}
+          </Link>
+        </h3>
+
+        <p className="mt-1 line-clamp-2 text-body-compact leading-relaxed text-ink-muted">
+          {article.summary}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Spotlight                                                                   */
+/* -------------------------------------------------------------------------- */
+
+function SpotlightCard({
+  game,
+  review,
+  guide,
+}: {
+  game: Game;
+  review?: Review;
+  guide?: Guide;
+}) {
+  return (
+    <article className="flex h-full flex-col border border-surface-border bg-white p-4">
+      <Link
+        href={`/games/${game.slug}`}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="relative mb-3 block aspect-[16/10] overflow-hidden rounded bg-surface-low"
+      >
+        <Image
+          src={game.coverImage}
+          alt={game.imageAlt}
+          fill
+          sizes="(max-width: 1024px) 50vw, 25vw"
+          className="object-cover"
+        />
+      </Link>
+
+      <h3 className="font-serif text-[17px] font-medium leading-snug text-ink">
+        <Link
+          href={`/games/${game.slug}`}
+          className="transition-colors hover:text-accent-hover"
+        >
+          {game.title}
+        </Link>
+      </h3>
+
+      <p className="mt-1 line-clamp-3 text-[13px] leading-relaxed text-ink-muted">
+        {game.description}
+      </p>
+
+      <ul className="mt-auto flex flex-col gap-1 border-t border-surface-border pt-3 text-[12px]">
+        {review ? (
+          <li>
+            <Link
+              href={`/reviews/${review.slug}`}
+              className="text-ink-muted transition-colors hover:text-accent-hover"
+            >
+              Read the review
+            </Link>
+          </li>
+        ) : null}
+        {guide ? (
+          <li>
+            <Link
+              href={`/guides/${guide.slug}`}
+              className="text-ink-muted transition-colors hover:text-accent-hover"
+            >
+              {guide.category} guide
+            </Link>
+          </li>
+        ) : null}
+      </ul>
+    </article>
+  );
+}
+
+/**
+ * Picks up to four games that have both a review and a guide, so the spotlight
+ * always links somewhere real rather than to an empty section.
+ */
+function gamesForSpotlight(): { game: Game; review?: Review; guide?: Guide }[] {
+  return getAllGames()
+    .map((game) => ({
+      game,
+      review: getReviewForGame(game.slug),
+      guide: game.relatedGuideSlugs.map(getGuideBySlug).find(Boolean),
+    }))
+    .filter((entry) => entry.review || entry.guide)
+    .slice(0, 4);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Structured data                                                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * ItemList of the articles currently on the homepage. Only genuinely rendered
+ * articles are listed, and every URL is absolute.
+ */
+function homepageItemListJsonLd(articles: NewsArticle[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Latest gaming news from GamersPulse',
+    itemListElement: articles.map((article, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: absoluteUrl(`/news/${article.slug}`),
+      name: article.title,
+    })),
+  };
 }

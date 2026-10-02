@@ -12,9 +12,42 @@ export type GameGenre =
   | 'Indie'
   | 'Multiplayer';
 
-export interface Author {
+/**
+ * Fields every indexable piece of content shares.
+ *
+ * Dates are stored exactly as published and rendered with
+ * `formatDate` from lib/site.ts. They are never back-dated or forward-dated.
+ */
+export interface ContentBase {
+  id: string;
+  slug: string;
+  title: string;
+  /** Alternative text for the record's image. Required — never optional. */
+  imageAlt: string;
+  /** ISO-ish human date string, e.g. 'September 30, 2026'. */
+  publishedAt: string;
+  /** Only present when the piece has genuinely been revised since publication. */
+  updatedAt?: string;
+  /**
+   * References an entry in data/authors.ts. Resolved through
+   * `getAuthorFor` so a byline can never render as an empty string or a
+   * broken author link.
+   */
+  authorId: string;
+  tags?: string[];
+}
+
+export interface AuthorProfile {
+  slug: string;
   name: string;
   role: string;
+  bio: string[];
+  coverage: string[];
+  links: {
+    about: string;
+    editorialPolicy: string;
+    contact: string;
+  };
 }
 
 export interface Game {
@@ -23,13 +56,21 @@ export interface Game {
   title: string;
   coverImage: string;
   heroImage: string;
+  imageAlt: string;
   genre: GameGenre;
   genres: GameGenre[];
   platforms: Platform[];
+  /** Release date as a parseable date string, with any qualifier separate. */
   releaseDate: string;
+  /** e.g. 'Early Access'. Rendered after the date, never inside it. */
+  releaseNote?: string;
   developer: string;
   publisher: string;
-  rating: number; // e.g. 9.4
+  /**
+   * The publication's own score for the game. Only present when a real
+   * review exists. Never synthesised.
+   */
+  rating?: number;
   description: string;
   overview: string;
   gameplay: string;
@@ -39,7 +80,6 @@ export interface Game {
   performance: string;
   pros: string[];
   cons: string[];
-  reviewSlug?: string;
   relatedGameSlugs: string[];
   relatedGuideSlugs: string[];
   relatedNewsSlugs: string[];
@@ -50,18 +90,18 @@ export interface ReviewScoreBreakdown {
   score: number;
 }
 
-export interface Review {
-  id: string;
-  slug: string;
+/**
+ * A review is titled after the game it covers, so `title` from ContentBase is
+ * replaced by `gameTitle` rather than duplicated.
+ */
+export interface Review extends Omit<ContentBase, 'title'> {
   gameSlug: string;
   gameTitle: string;
   coverImage: string;
   genre: GameGenre;
   platforms: Platform[];
+  /** Real score awarded by this publication, 0-10. */
   score: number;
-  author: Author;
-  publishedAt: string;
-  updatedAt?: string;
   summary: string;
   gameplay: string;
   graphics: string;
@@ -85,22 +125,22 @@ export type NewsCategory =
   | 'Mobile'
   | 'Indie';
 
-export interface NewsArticle {
-  id: string;
-  slug: string;
-  title: string;
+export interface NewsArticle extends ContentBase {
   category: NewsCategory;
   summary: string;
   heroImage: string;
-  publishedAt: string;
-  updatedAt?: string;
   readTime: string;
-  author: Author;
   introduction: string;
   mainStory: string;
   whatWeKnow: string;
   whyItMatters: string;
   whatHappensNext: string;
+  /**
+   * A quotation from a named, attributable source. Rendered as a pull quote.
+   * When absent, no pull quote is rendered — a decorative quote is never
+   * invented or reused across articles.
+   */
+  pullQuote?: { text: string; attribution: string };
   relatedArticleSlugs: string[];
   relatedGameSlugs: string[];
 }
@@ -119,17 +159,11 @@ export interface GuideSection {
   keyPoints?: string[];
 }
 
-export interface Guide {
-  id: string;
-  slug: string;
-  title: string;
+export interface Guide extends ContentBase {
   category: GuideCategory;
   summary: string;
   heroImage: string;
   readTime: string;
-  publishedAt: string;
-  updatedAt?: string;
-  author: Author;
   gameSlug: string;
   gameTitle: string;
   sections: GuideSection[];

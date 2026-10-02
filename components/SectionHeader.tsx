@@ -1,50 +1,66 @@
-import React from 'react';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface SectionHeaderProps {
+  /** Rendered above the headline as an uppercase kicker. */
   badge?: string;
   title: string;
+  /** Must match the `id` used by an enclosing section's aria-labelledby. */
+  id?: string;
   description?: string;
   viewAllHref?: string;
   viewAllText?: string;
+  accentKicker?: boolean;
 }
 
+/**
+ * Editorial section divider.
+ *
+ * A hairline rule beneath the heading separates sections without any drop
+ * shadow or filled container.
+ */
 export function SectionHeader({
   badge,
   title,
+  id,
   description,
   viewAllHref,
-  viewAllText = 'View All'
+  viewAllText = 'View all',
+  accentKicker = false,
 }: SectionHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-surface-border/60">
+    <div className="mb-6 flex flex-col gap-3 border-b border-surface-border pb-3 md:flex-row md:items-baseline md:justify-between">
       <div>
-        {badge && (
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-pulse/10 text-pulse border border-pulse/20 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-pulse animate-pulse" />
+        {badge ? (
+          <p className={`kicker mb-0.5 ${accentKicker ? 'text-accent' : 'text-ink-faint'}`}>
             {badge}
-          </div>
-        )}
-        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+          </p>
+        ) : null}
+        <h2
+          id={id}
+          className="font-serif text-headline-md font-semibold tracking-tight text-ink md:text-headline-lg"
+        >
           {title}
         </h2>
-        {description && (
-          <p className="mt-1.5 text-sm md:text-base text-slate-400 max-w-2xl leading-relaxed">
+        {description ? (
+          <p className="mt-1.5 max-w-2xl text-body-default leading-relaxed text-ink-muted">
             {description}
           </p>
-        )}
+        ) : null}
       </div>
 
-      {viewAllHref && (
+      {viewAllHref ? (
         <Link
           href={viewAllHref}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-pulse hover:text-pulse-hover transition-colors group shrink-0"
+          className="group inline-flex shrink-0 items-center gap-1 text-body-compact font-medium text-accent-hover transition-colors hover:text-ink"
         >
           <span>{viewAllText}</span>
-          <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          <ArrowRight
+            aria-hidden="true"
+            className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+          />
         </Link>
-      )}
+      ) : null}
     </div>
   );
 }

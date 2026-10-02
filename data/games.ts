@@ -7,6 +7,7 @@ export const games: Game[] = [
     title: 'Elden Ring: Shadow of the Erdtree',
     coverImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Elden Ring: Shadow of the Erdtree',
     genre: 'Action',
     genres: ['Action', 'RPG', 'Adventure'],
     platforms: ['PC', 'PlayStation', 'Xbox'],
@@ -43,7 +44,6 @@ export const games: Game[] = [
       'Steep difficulty spike for uncollected blessing tiers',
       'Camera tracking difficulties during dense multi-phase colossal bosses'
     ],
-    reviewSlug: 'elden-ring-shadow-of-the-erdtree-review',
     relatedGameSlugs: ['armored-core-vi', 'baldurs-gate-3', 'alan-wake-2', 'hades-2'],
     relatedGuideSlugs: ['shadow-of-the-erdtree-scadutree-fragment-progression'],
     relatedNewsSlugs: ['unreal-engine-5-nanite-tessellation-performance', 'cross-platform-progression-standards']
@@ -54,6 +54,7 @@ export const games: Game[] = [
     title: 'Cyberpunk 2077: Phantom Liberty',
     coverImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Cyberpunk 2077: Phantom Liberty',
     genre: 'RPG',
     genres: ['RPG', 'Action', 'Adventure'],
     platforms: ['PC', 'PlayStation', 'Xbox'],
@@ -90,10 +91,9 @@ export const games: Game[] = [
       'High PC system requirements for path tracing modes',
       'Dogtown border checkpoints can occasionally interrupt traversal flow'
     ],
-    reviewSlug: 'cyberpunk-2077-phantom-liberty-review',
     relatedGameSlugs: ['elden-ring-shadow-of-the-erdtree', 'baldurs-gate-3', 'alan-wake-2', 'helldivers-2'],
     relatedGuideSlugs: ['cyberpunk-2077-ultimate-cyberware-synergy-builds'],
-    relatedNewsSlugs: ['handheld-gaming-pcs-in-2026-linux-proton-status', 'unreal-engine-5-nanite-tessellation-performance']
+    relatedNewsSlugs: ['handheld-gaming-pcs-linux-proton-status', 'unreal-engine-5-nanite-tessellation-performance']
   },
   {
     id: 'baldurs-gate-3',
@@ -101,6 +101,7 @@ export const games: Game[] = [
     title: "Baldur's Gate 3",
     coverImage: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: "Illustrative gaming photograph for Baldur's Gate 3",
     genre: 'RPG',
     genres: ['RPG', 'Strategy', 'Adventure'],
     platforms: ['PC', 'PlayStation', 'Xbox'],
@@ -137,7 +138,6 @@ export const games: Game[] = [
       'Act 3 urban centers remain CPU heavy during intensive rendering',
       'Inventory management can become cumbersome across deep party inventories'
     ],
-    reviewSlug: 'baldurs-gate-3-review',
     relatedGameSlugs: ['elden-ring-shadow-of-the-erdtree', 'hades-2', 'manor-lords', 'cyberpunk-2077-phantom-liberty'],
     relatedGuideSlugs: ['baldurs-gate-3-honour-mode-survival-guide'],
     relatedNewsSlugs: ['the-resurgence-of-single-player-immersive-sims', 'cross-platform-progression-standards']
@@ -148,6 +148,7 @@ export const games: Game[] = [
     title: 'Alan Wake 2',
     coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Alan Wake 2',
     genre: 'Horror',
     genres: ['Horror', 'Adventure', 'Action'],
     platforms: ['PC', 'PlayStation', 'Xbox'],
@@ -184,7 +185,6 @@ export const games: Game[] = [
       'Stringent hardware requirements on PC older generation GPUs',
       'Jump scares can feel occasionally overutilized in early chapters'
     ],
-    reviewSlug: 'alan-wake-2-review',
     relatedGameSlugs: ['cyberpunk-2077-phantom-liberty', 'elden-ring-shadow-of-the-erdtree', 'helldivers-2'],
     relatedGuideSlugs: ['alan-wake-2-inventory-words-of-power-guide'],
     relatedNewsSlugs: ['the-resurgence-of-single-player-immersive-sims', 'unreal-engine-5-nanite-tessellation-performance']
@@ -195,6 +195,7 @@ export const games: Game[] = [
     title: 'Helldivers 2',
     coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Helldivers 2',
     genre: 'Multiplayer',
     genres: ['Multiplayer', 'Action'],
     platforms: ['PC', 'PlayStation'],
@@ -231,7 +232,6 @@ export const games: Game[] = [
       'Occasional connection stability drops during peak weekend galactic battles',
       'Weapon balance revisions have occasionally disrupted favorite loadouts'
     ],
-    reviewSlug: 'helldivers-2-review',
     relatedGameSlugs: ['armored-core-vi', 'cyberpunk-2077-phantom-liberty', 'balatro'],
     relatedGuideSlugs: ['helldivers-2-high-difficulty-loadout-breakdown'],
     relatedNewsSlugs: ['cross-platform-progression-standards', 'playstation-5-pro-pssr-analysis']
@@ -242,6 +242,7 @@ export const games: Game[] = [
     title: 'Balatro',
     coverImage: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Balatro',
     genre: 'Indie',
     genres: ['Indie', 'Strategy', 'Puzzle'],
     platforms: ['PC', 'PlayStation', 'Xbox', 'Nintendo', 'Mobile'],
@@ -278,10 +279,9 @@ export const games: Game[] = [
       'Unfavorable Boss Blind counters can occasionally extinguish a run unexpectedly',
       'Can easily consume hours without realizing the passage of time'
     ],
-    reviewSlug: 'balatro-review',
     relatedGameSlugs: ['hades-2', 'manor-lords', 'baldurs-gate-3'],
     relatedGuideSlugs: ['balatro-deck-building-joker-synergies-guide'],
-    relatedNewsSlugs: ['handheld-gaming-pcs-in-2026-linux-proton-status', 'the-resurgence-of-single-player-immersive-sims']
+    relatedNewsSlugs: ['handheld-gaming-pcs-linux-proton-status', 'the-resurgence-of-single-player-immersive-sims']
   },
   {
     id: 'hades-2',
@@ -289,13 +289,14 @@ export const games: Game[] = [
     title: 'Hades II',
     coverImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Hades II',
     genre: 'Indie',
     genres: ['Indie', 'Action', 'RPG'],
     platforms: ['PC'],
-    releaseDate: 'May 6, 2024 (Early Access)',
+    releaseDate: 'May 6, 2024',
+    releaseNote: 'Early Access',
     developer: 'Supergiant Games',
     publisher: 'Supergiant Games',
-    rating: 9.4,
     description:
       'Battle beyond the Underworld using dark sorcery as Melinoë, Princess of the Underworld, in Supergiant Games\' first-ever sequel.',
     overview:
@@ -326,8 +327,10 @@ export const games: Game[] = [
       'Resource gathering mechanics can occasionally slow run pacing'
     ],
     relatedGameSlugs: ['balatro', 'elden-ring-shadow-of-the-erdtree', 'baldurs-gate-3'],
-    relatedGuideSlugs: ['balatro-deck-building-joker-synergies-guide'],
-    relatedNewsSlugs: ['handheld-gaming-pcs-in-2026-linux-proton-status', 'the-resurgence-of-single-player-immersive-sims']
+    // No guide covers this game yet. Never link a reader to an
+    // unrelated game's guide just to fill the section.
+    relatedGuideSlugs: [],
+    relatedNewsSlugs: ['handheld-gaming-pcs-linux-proton-status', 'the-resurgence-of-single-player-immersive-sims']
   },
   {
     id: 'manor-lords',
@@ -335,13 +338,14 @@ export const games: Game[] = [
     title: 'Manor Lords',
     coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Manor Lords',
     genre: 'Strategy',
     genres: ['Strategy', 'Indie'],
     platforms: ['PC'],
-    releaseDate: 'April 26, 2024 (Early Access)',
+    releaseDate: 'April 26, 2024',
+    releaseNote: 'Early Access',
     developer: 'Slavic Magic',
     publisher: 'Hooded Horse',
-    rating: 9.1,
     description:
       'A medieval city builder featuring in-depth organic settlement development, historical resource chains, and large-scale tactical battlefield combat.',
     overview:
@@ -372,7 +376,7 @@ export const games: Game[] = [
       'Trade barter mechanics require careful micro-management to prevent bottlenecks'
     ],
     relatedGameSlugs: ['baldurs-gate-3', 'balatro', 'forza-horizon-5'],
-    relatedGuideSlugs: ['baldurs-gate-3-honour-mode-survival-guide'],
+    relatedGuideSlugs: [],
     relatedNewsSlugs: ['the-resurgence-of-single-player-immersive-sims', 'unreal-engine-5-nanite-tessellation-performance']
   },
   {
@@ -381,13 +385,13 @@ export const games: Game[] = [
     title: 'Forza Horizon 5',
     coverImage: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Forza Horizon 5',
     genre: 'Racing',
     genres: ['Racing', 'Sports', 'Adventure'],
     platforms: ['PC', 'Xbox'],
     releaseDate: 'November 9, 2021',
     developer: 'Playground Games',
     publisher: 'Xbox Game Studios',
-    rating: 9.2,
     description:
       'An open-world racing showcase set across vibrant Mexican biomes, delivering hundreds of cars, dynamic weather, and accessible driving physics.',
     overview:
@@ -418,7 +422,7 @@ export const games: Game[] = [
       'Festival playlist structure can feel slightly repetitive over long periods'
     ],
     relatedGameSlugs: ['armored-core-vi', 'helldivers-2', 'manor-lords'],
-    relatedGuideSlugs: ['helldivers-2-high-difficulty-loadout-breakdown'],
+    relatedGuideSlugs: [],
     relatedNewsSlugs: ['cross-platform-progression-standards', 'playstation-5-pro-pssr-analysis']
   },
   {
@@ -427,13 +431,13 @@ export const games: Game[] = [
     title: 'Armored Core VI: Fires of Rubicon',
     coverImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Armored Core VI: Fires of Rubicon',
     genre: 'Action',
     genres: ['Action', 'Strategy'],
     platforms: ['PC', 'PlayStation', 'Xbox'],
     releaseDate: 'August 25, 2023',
     developer: 'FromSoftware Inc.',
     publisher: 'Bandai Namco Entertainment',
-    rating: 9.1,
     description:
       'High-octane omnidirectional mech combat on the ruined industrial planet Rubicon 3, emphasizing tactical garage assembly and blisteringly fast boss battles.',
     overview:
@@ -464,7 +468,7 @@ export const games: Game[] = [
       'Multiplayer mode is limited primarily to direct arena skirmishes'
     ],
     relatedGameSlugs: ['elden-ring-shadow-of-the-erdtree', 'helldivers-2', 'cyberpunk-2077-phantom-liberty'],
-    relatedGuideSlugs: ['shadow-of-the-erdtree-scadutree-fragment-progression'],
+    relatedGuideSlugs: [],
     relatedNewsSlugs: ['unreal-engine-5-nanite-tessellation-performance', 'the-resurgence-of-single-player-immersive-sims']
   },
   {
@@ -473,13 +477,13 @@ export const games: Game[] = [
     title: 'The Legend of Zelda: Tears of the Kingdom',
     coverImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for The Legend of Zelda: Tears of the Kingdom',
     genre: 'Adventure',
     genres: ['Adventure', 'Action', 'Puzzle'],
     platforms: ['Nintendo'],
     releaseDate: 'May 12, 2023',
     developer: 'Nintendo EPD',
     publisher: 'Nintendo',
-    rating: 9.7,
     description:
       'An engineering and physics triumph that transforms the kingdom of Hyrule across floating Sky Islands, the terrestrial surface, and the subterranean Depths.',
     overview:
@@ -510,7 +514,7 @@ export const games: Game[] = [
       'Subterranean Depths biome can occasionally feel visually repetitive'
     ],
     relatedGameSlugs: ['elden-ring-shadow-of-the-erdtree', 'baldurs-gate-3', 'balatro'],
-    relatedGuideSlugs: ['shadow-of-the-erdtree-scadutree-fragment-progression'],
+    relatedGuideSlugs: [],
     relatedNewsSlugs: ['nintendo-backward-compatibility-roadmap', 'the-resurgence-of-single-player-immersive-sims']
   },
   {
@@ -519,13 +523,13 @@ export const games: Game[] = [
     title: 'Final Fantasy VII Rebirth',
     coverImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
     heroImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Illustrative gaming photograph for Final Fantasy VII Rebirth',
     genre: 'RPG',
     genres: ['RPG', 'Action', 'Adventure'],
     platforms: ['PlayStation'],
     releaseDate: 'February 29, 2024',
     developer: 'Square Enix',
     publisher: 'Square Enix',
-    rating: 9.3,
     description:
       'Cloud and company escape Midgar into a sprawling planet, offering vast regional exploration, strategic synergy combat, and the acclaimed Queen\'s Blood minigame.',
     overview:
@@ -556,7 +560,7 @@ export const games: Game[] = [
       'Open-world Chadley tower activities can feel slightly formulaic'
     ],
     relatedGameSlugs: ['baldurs-gate-3', 'cyberpunk-2077-phantom-liberty', 'elden-ring-shadow-of-the-erdtree'],
-    relatedGuideSlugs: ['cyberpunk-2077-ultimate-cyberware-synergy-builds'],
+    relatedGuideSlugs: [],
     relatedNewsSlugs: ['playstation-5-pro-pssr-analysis', 'cross-platform-progression-standards']
   }
 ];

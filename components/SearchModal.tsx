@@ -1,158 +1,174 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, X, ArrowRight, Gamepad2, FileText, Star, BookOpen } from 'lucide-react';
-import { searchAll, SearchResultItem } from '@/lib/data';
+
+import { searchAll, type SearchResultItem } from '@/lib/data';
 import { RatingBadge } from './RatingBadge';
 
-interface SearchModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+const TYPE_META: Record<
+  SearchResultItem['type'],
+  { label: string; Icon: typeof Gamepad2 }
+> = {
+  game: { label: 'Game', Icon: Gamepad2 },
+  review: { label: 'Review', Icon: Star },
+  news: { label: 'News', Icon: FileText },
+  guide: { label: 'Guide', Icon: BookOpen },
+};
 
-export function SearchModal({ isOpen, onClose }: SearchModalProps) {
+const SUGGESTED_TERMS = ['Elden Ring', 'Cyberpunk', "Baldur's Gate", 'Helldivers', 'Balatro'];
+
+/** Delay before a keystroke triggers a search, in milliseconds. */
+const SEARCH_DEBOUNCE_MS = 180;
+
+export function SearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
 
+  /* ---- Focus management, Escape, scroll lock, focus trap ---- */
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 50);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-      setQuery('');
-      setResults([]);
+    if (!isOpen) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = 'hidden';
+
+    // Defer so the input exists and the browser has painted the panel.
+    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 20);
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      // Trap focus inside the dialog. Without this, keyboard users can tab
+      // straight out of an `aria-modal` region into the page behind it.
+      const focusables = panelRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusables || focusables.length === 0) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
 
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = 'unset';
+      window.clearTimeout(focusTimer);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+      previouslyFocused?.focus();
     };
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (isOpen) onClose();
-        else {
-          // Open triggered by parent state
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setQuery(val);
-    if (val.trim().length > 0) {
-      setResults(searchAll(val));
-    } else {
-      setResults([]);
-    }
-  };
-
-  const clearSearch = () => {
+  useEffect(() => {
+    if (isOpen) return;
     setQuery('');
     setResults([]);
-    inputRef.current?.focus();
-  };
+  }, [isOpen]);
+
+  /* ---- Debounced search so each keystroke does not rescan all content ---- */
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
+      setResults([]);
+      return;
+    }
+
+    const timer = window.setTimeout(() => setResults(searchAll(trimmed)), SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [query]);
 
   if (!isOpen) return null;
 
-  const getTypeIcon = (type: SearchResultItem['type']) => {
-    switch (type) {
-      case 'game':
-        return <Gamepad2 className="w-3.5 h-3.5 text-cyan-400" />;
-      case 'review':
-        return <Star className="w-3.5 h-3.5 text-amber-400" />;
-      case 'news':
-        return <FileText className="w-3.5 h-3.5 text-blue-400" />;
-      case 'guide':
-        return <BookOpen className="w-3.5 h-3.5 text-emerald-400" />;
-    }
-  };
-
-  const getTypeLabel = (type: SearchResultItem['type']) => {
-    switch (type) {
-      case 'game':
-        return 'Game';
-      case 'review':
-        return 'Review';
-      case 'news':
-        return 'News';
-      case 'guide':
-        return 'Guide';
-    }
-  };
+  const trimmedQuery = query.trim();
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="search-modal-title"
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 md:pt-24 bg-background/80 backdrop-blur-md animate-in fade-in duration-200"
-      onClick={onClose}
-    >
+    /* The backdrop is a sibling button, not the dialog itself, so dismissing
+       by clicking outside is a real button for assistive technology too. */
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 md:pt-24">
+      <button
+        type="button"
+        aria-label="Close search"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default bg-ink/40 backdrop-blur-[2px]"
+      />
+
       <div
-        className="relative w-full max-w-2xl rounded-2xl bg-surface border border-surface-border shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
-        onClick={(e) => e.stopPropagation()}
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="relative flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden border border-surface-border bg-white shadow-overlay"
       >
-        {/* Search Header */}
-        <div className="flex items-center px-4 py-3 border-b border-surface-border bg-surface-elevated">
-          <Search className="w-5 h-5 text-pulse shrink-0 ml-1" />
+        <h2 id={titleId} className="sr-only">
+          Search GamersPulse
+        </h2>
+
+        <div className="flex items-center border-b border-surface-border bg-canvas px-4 py-3">
+          <Search aria-hidden="true" className="h-4 w-4 shrink-0 text-accent" />
           <input
             ref={inputRef}
-            type="text"
+            type="search"
             value={query}
-            onChange={handleSearch}
-            placeholder="Search games, news, reviews and guides..."
-            className="w-full bg-transparent px-3 py-2 text-white placeholder-slate-400 text-base focus:outline-none"
-            id="search-modal-title"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search games, news, reviews and guides"
+            aria-label="Search games, news, reviews and guides"
+            aria-describedby={`${titleId}-hint`}
+            className="w-full bg-transparent px-3 py-2 text-[15px] text-ink placeholder:text-ink-faint focus:outline-none focus-visible:outline-none"
           />
           {query && (
             <button
-              onClick={clearSearch}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-subtle transition-colors mr-1"
+              type="button"
+              onClick={() => {
+                setQuery('');
+                inputRef.current?.focus();
+              }}
+              className="p-1.5 text-ink-faint transition-colors hover:text-ink"
               aria-label="Clear search input"
             >
-              <X className="w-4 h-4" />
+              <X aria-hidden="true" className="h-4 w-4" />
             </button>
           )}
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-subtle transition-colors text-xs font-mono border border-surface-border"
-            aria-label="Close search modal"
+            className="border border-surface-border px-2 py-1 font-sans text-[10px] font-semibold uppercase tracking-label text-ink-muted transition-colors hover:text-ink"
           >
-            ESC
+            Esc
           </button>
         </div>
 
-        {/* Results Container */}
-        <div className="overflow-y-auto p-4 flex-grow space-y-2">
-          {query.trim().length === 0 ? (
-            <div className="py-12 text-center text-slate-400">
-              <p className="text-sm font-medium">Type a search term to find games, reviews, guides and news</p>
-              <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs">
-                <span className="text-slate-500">Popular searches:</span>
-                {['Elden Ring', 'Cyberpunk', 'Baldur\'s Gate', 'Helldivers', 'Balatro'].map((term) => (
+        <div className="flex-grow space-y-2 overflow-y-auto p-4">
+          {trimmedQuery.length === 0 ? (
+            <div className="py-12 text-center text-ink-muted">
+              <p className="text-[15px] font-medium">
+                Type a search term to find games, reviews, guides and news
+              </p>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
+                <span className="text-ink-faint">Popular searches:</span>
+                {SUGGESTED_TERMS.map((term) => (
                   <button
                     key={term}
-                    onClick={() => {
-                      setQuery(term);
-                      setResults(searchAll(term));
-                    }}
-                    className="px-2.5 py-1 rounded bg-surface-subtle border border-surface-border text-slate-300 hover:text-pulse hover:border-pulse/40 transition-colors"
+                    type="button"
+                    onClick={() => setQuery(term)}
+                    className="border border-surface-border bg-canvas px-2.5 py-1 text-ink-muted transition-colors hover:border-accent hover:text-accent-hover"
                   >
                     {term}
                   </button>
@@ -160,60 +176,73 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
               </div>
             </div>
           ) : results.length === 0 ? (
-            <div className="py-12 text-center text-slate-400">
-              <p className="text-base font-semibold text-slate-300">No results found for &ldquo;{query}&rdquo;</p>
-              <p className="text-xs text-slate-500 mt-1">Try checking for typos or searching by platform, genre, or developer.</p>
+            <div className="py-12 text-center text-ink-muted">
+              <p className="font-serif text-xl font-semibold text-ink">
+                No results found for &ldquo;{trimmedQuery}&rdquo;
+              </p>
+              <p className="mt-1 text-[13px] text-ink-faint">
+                Try a different spelling, or search by platform, genre or developer.
+              </p>
             </div>
           ) : (
-            results.map((item) => (
-              <Link
-                key={item.id}
-                href={item.url}
-                onClick={onClose}
-                className="group flex items-center justify-between p-3 rounded-xl bg-surface-subtle/60 hover:bg-surface-elevated border border-surface-border/50 hover:border-pulse/40 transition-all duration-200"
-              >
-                <div className="flex items-center gap-3.5 overflow-hidden">
-                  <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-surface">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      sizes="48px"
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="overflow-hidden">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400">
-                        {getTypeIcon(item.type)}
-                        <span>{getTypeLabel(item.type)}</span>
-                      </span>
-                      <span className="text-slate-600 text-xs">•</span>
-                      <span className="text-slate-400 text-xs truncate">
-                        {item.category}
-                      </span>
-                    </div>
-                    <h4 className="text-sm font-bold text-white group-hover:text-pulse transition-colors truncate">
-                      {item.title}
-                    </h4>
-                  </div>
-                </div>
+            <ul className="space-y-2">
+              {results.map((item) => {
+                const { Icon, label } = TYPE_META[item.type];
+                return (
+                  <li key={item.id}>
+                    <Link
+                      href={item.url}
+                      onClick={onClose}
+                      className="group flex items-center justify-between border border-surface-border bg-canvas p-3 transition-colors hover:border-outline-variant hover:bg-accent-tint"
+                    >
+                      <div className="flex min-w-0 items-center gap-3.5">
+                        <div className="relative h-12 w-12 shrink-0 overflow-hidden bg-surface-low">
+                          <Image
+                            src={item.image}
+                            alt={item.imageAlt}
+                            fill
+                            sizes="48px"
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="mb-0.5 flex items-center gap-2">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-ink-muted">
+                              <Icon aria-hidden="true" className="h-3 w-3 text-accent" />
+                              {label}
+                            </span>
+                            <span className="text-xs text-ink-faint">{item.category}</span>
+                          </div>
+                          <p className="truncate font-serif text-[15px] font-medium text-ink transition-colors group-hover:text-accent-hover">
+                            {item.title}
+                          </p>
+                        </div>
+                      </div>
 
-                <div className="flex items-center gap-3 shrink-0 ml-3">
-                  {item.rating && <RatingBadge score={item.rating} size="sm" />}
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-pulse transition-transform group-hover:translate-x-1" />
-                </div>
-              </Link>
-            ))
+                      <div className="ml-3 flex shrink-0 items-center gap-3">
+                        {item.rating !== undefined && (
+                          <RatingBadge score={item.rating} size="sm" />
+                        )}
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="h-4 w-4 text-ink-faint transition-transform group-hover:translate-x-0.5 group-hover:text-accent"
+                        />
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
 
-        {/* Modal Footer */}
-        <div className="px-4 py-2.5 bg-surface-elevated border-t border-surface-border flex items-center justify-between text-xs text-slate-500">
-          <span>
-            {results.length > 0 ? `${results.length} result${results.length === 1 ? '' : 's'}` : 'Search across all GamersPulse publications'}
+        <div className="flex items-center justify-between border-t border-surface-border bg-canvas px-4 py-2.5 text-xs text-ink-faint">
+          <span id={`${titleId}-hint`} aria-live="polite">
+            {results.length > 0
+              ? `${results.length} result${results.length === 1 ? '' : 's'}`
+              : 'Searches games, reviews, guides and news'}
           </span>
-          <span className="hidden sm:inline font-mono">Press ESC to dismiss</span>
+          <span className="hidden sm:inline">Press Esc to close</span>
         </div>
       </div>
     </div>

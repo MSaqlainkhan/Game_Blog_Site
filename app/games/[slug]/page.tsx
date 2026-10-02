@@ -1,378 +1,301 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+import { AdSlot } from '@/components/AdSlot';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { GameCard } from '@/components/GameCard';
+import { GuideCard } from '@/components/GuideCard';
+import { NewsCard } from '@/components/NewsCard';
+import { RatingBadge } from '@/components/RatingBadge';
+import { SectionHeader } from '@/components/SectionHeader';
 import {
   getAllGames,
   getGameBySlug,
+  getGuideBySlug,
+  getNewsBySlug,
   getRelatedGames,
   getReviewForGame,
-  getNewsBySlug,
-  getGuideBySlug
 } from '@/lib/data';
-import { RatingBadge } from '@/components/RatingBadge';
-import { GameCard } from '@/components/GameCard';
-import { NewsCard } from '@/components/NewsCard';
-import { GuideCard } from '@/components/GuideCard';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { AdSlot } from '@/components/AdSlot';
-import {
-  Calendar,
-  Building,
-  Monitor,
-  CheckCircle2,
-  XCircle,
-  Star,
-  ArrowRight,
-  Sparkles,
-  Volume2,
-  Eye,
-  Cpu
-} from 'lucide-react';
+import { breadcrumbJsonLd, buildPageMetadata, jsonLd } from '@/lib/seo';
+import { formatDate, toIsoDate } from '@/lib/site';
 
-interface Props {
-  params: {
-    slug: string;
-  };
+interface PageProps {
+  params: { slug: string };
 }
 
 export function generateStaticParams() {
-  const games = getAllGames();
-  return games.map((game) => ({
-    slug: game.slug,
-  }));
+  return getAllGames().map((game) => ({ slug: game.slug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const game = getGameBySlug(params.slug);
-  if (!game) return { title: 'Game Not Found' };
-
-  return {
-    title: `${game.title} — Overview, Features & Technical Breakdown`,
-    description: game.description,
-    openGraph: {
-      title: `${game.title} | GamersPulse`,
-      description: game.description,
-      images: [{ url: game.heroImage || game.coverImage }],
-    },
-  };
-}
-
-export default function GameDetailPage({ params }: Props) {
+export function generateMetadata({ params }: PageProps): Metadata {
   const game = getGameBySlug(params.slug);
 
   if (!game) {
-    notFound();
+    return buildPageMetadata({
+      title: 'Game not found',
+      description: 'This game profile does not exist or has been moved.',
+      path: `/games/${params.slug}`,
+      index: false,
+    });
   }
 
-  const review = getReviewForGame(game.slug);
-  const relatedGames = getRelatedGames(game.relatedGameSlugs).slice(0, 4);
-  const relatedGuides = game.relatedGuideSlugs
-    .map((s) => getGuideBySlug(s))
-    .filter(Boolean);
-  const relatedNews = game.relatedNewsSlugs
-    .map((s) => getNewsBySlug(s))
-    .filter(Boolean);
+  return buildPageMetadata({
+    title: game.title,
+    description: game.description,
+    path: `/games/${game.slug}`,
+    image: game.coverImage,
+    imageAlt: game.imageAlt,
+  });
+}
 
-  const jsonLdGame = {
+/**
+ * Game profile.
+ *
+ * This is a factual reference page — developer, publisher, platforms, genre,
+ * release information and our own written coverage. It deliberately carries no
+ * `aggregateRating`: the score shown on the page is GamersPulse's own editorial
+ * judgement from a single review, which is not an aggregate of third-party
+ * ratings, and marking it up as one would misrepresent it to search engines.
+ */
+export default function GamePage({ params }: PageProps) {
+  const game = getGameBySlug(params.slug);
+  if (!game) notFound();
+
+  const review = getReviewForGame(game.slug);
+  const relatedGames = getRelatedGames(game.relatedGameSlugs);
+  const relatedGuides = game.relatedGuideSlugs
+    .map(getGuideBySlug)
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const relatedNews = game.relatedNewsSlugs
+    .map(getNewsBySlug)
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
+  const path = `/games/${game.slug}`;
+
+  const videoGameJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'VideoGame',
+    '@id': `${path}#game`,
     name: game.title,
     description: game.description,
-    image: game.coverImage,
+    image: [game.coverImage, game.heroImage],
     genre: game.genres,
     gamePlatform: game.platforms,
-    author: {
-      '@type': 'Organization',
-      name: game.developer,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: game.publisher,
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: game.rating,
-      bestRating: 10,
-      worstRating: 1,
-      ratingCount: 1,
-    },
+    author: { '@type': 'Organization', name: game.developer },
+    publisher: { '@type': 'Organization', name: game.publisher },
+    datePublished: toIsoDate(game.releaseDate),
   };
 
+  const crumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Games', path: '/games' },
+    { name: game.title, path },
+  ]);
+
   return (
-    <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGame) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(videoGameJsonLd) }}
       />
+      {crumbs ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(crumbs) }} />
+      ) : null}
 
-      <Breadcrumbs
-        items={[
-          { label: 'Games', href: '/games' },
-          { label: game.title },
-        ]}
-      />
+      <div className="editorial-container py-8 md:py-10">
+        <Breadcrumbs items={[{ label: 'Games', href: '/games' }, { label: game.title }]} />
 
-      {/* Hero Banner */}
-      <div className="relative rounded-3xl bg-surface border border-surface-border overflow-hidden mb-12 shadow-card">
-        <div className="relative aspect-[21/9] min-h-[300px] md:min-h-[440px] w-full bg-surface-subtle">
-          <Image
-            src={game.heroImage}
-            alt={`${game.title} backdrop banner`}
-            fill
-            priority
-            sizes="(max-width: 1280px) 100vw, 1280px"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent" />
-
-          {/* Overlay Info */}
-          <div className="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end">
-            <div className="flex flex-wrap items-center gap-3 mb-3">
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pulse text-background shadow-pulse-glow">
+        <article>
+          <header className="border-b border-surface-border pb-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href={`/games?genre=${encodeURIComponent(game.genre)}`}
+                className="kicker border border-accent/30 bg-accent-tint px-2 py-0.5 text-accent-hover"
+              >
                 {game.genre}
-              </span>
-              <RatingBadge score={game.rating} size="md" showLabel />
+              </Link>
+              {review ? <RatingBadge score={review.score} size="md" /> : null}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
+            <h1 className="mt-4 font-serif text-headline-lg font-semibold leading-tight tracking-tight text-ink md:text-display-hero">
               {game.title}
             </h1>
 
-            {/* Metadata Badges */}
-            <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-300">
-              <div className="flex items-center gap-1.5 bg-surface-subtle/80 px-3 py-1.5 rounded-lg border border-surface-border">
-                <Calendar className="w-4 h-4 text-pulse" />
-                <span>{game.releaseDate}</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 bg-surface-subtle/80 px-3 py-1.5 rounded-lg border border-surface-border">
-                <Building className="w-4 h-4 text-pulse" />
-                <span>Dev: {game.developer}</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 bg-surface-subtle/80 px-3 py-1.5 rounded-lg border border-surface-border">
-                <Monitor className="w-4 h-4 text-pulse" />
-                <span>Platforms: {game.platforms.join(', ')}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Grid: Main Content + Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Main 2-Column Content */}
-        <div className="lg:col-span-2 space-y-10">
-          {/* Section: Overview */}
-          <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-pulse" />
-              Overview
-            </h2>
-            <p className="text-slate-300 leading-relaxed text-base md:text-lg">
-              {game.overview}
+            <p className="mt-4 max-w-3xl text-subhead-editorial leading-relaxed text-ink-muted">
+              {game.description}
             </p>
-          </section>
+          </header>
 
-          {/* Review Callout (if available) */}
-          {review && (
-            <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-r from-cyan-950/40 via-surface to-surface p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-pulse-glow">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-1">
-                  <Star className="w-4 h-4 fill-cyan-400" />
-                  Editorial Review Available
+          {/* Factual reference table */}
+          <div className="mt-8 grid grid-cols-1 gap-gutter-desktop lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <figure className="figure-breakout figure-breakout--contained">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-surface-low">
+                  <Image
+                    src={game.heroImage}
+                    alt={game.imageAlt}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                    className="object-cover"
+                  />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-1">
-                  GamersPulse Verdict: {review.score} / 10
-                </h3>
-                <p className="text-sm text-slate-300 max-w-lg line-clamp-2">
-                  {review.summary}
-                </p>
+                <figcaption>{game.imageAlt}</figcaption>
+              </figure>
+
+              <div className="prose-editorial mt-8">
+                <h2>Overview</h2>
+                <p>{game.overview}</p>
+
+                <h2>Gameplay</h2>
+                <p>{game.gameplay}</p>
+
+                <h3>Key features</h3>
+                <ul>
+                  {game.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+
+                <h2>Graphics</h2>
+                <p>{game.graphics}</p>
+
+                <h2>Sound</h2>
+                <p>{game.sound}</p>
+
+                <h2>Performance</h2>
+                <p>{game.performance}</p>
               </div>
 
-              <Link
-                href={`/reviews/${review.slug}`}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-pulse text-background font-bold text-sm hover:bg-pulse-hover transition-colors shadow-pulse-glow shrink-0"
-              >
-                <span>Read Full Review</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              <AdSlot name="articleMid" className="mt-10" />
             </div>
-          )}
 
-          {/* Section: Gameplay */}
-          <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Gameplay Mechanics</h2>
-            <p className="text-slate-300 leading-relaxed text-base">
-              {game.gameplay}
-            </p>
-          </section>
+            <aside className="lg:col-span-4" aria-label="Game details">
+              <section aria-labelledby="game-details" className="border-t border-surface-border pt-6">
+                <h2 id="game-details" className="font-serif text-headline-sm font-semibold text-ink">
+                  Game details
+                </h2>
 
-          {/* Section: Features */}
-          <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Key Features</h2>
-            <ul className="grid grid-cols-1 gap-3">
-              {game.features.map((feat, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-slate-300 text-sm md:text-base">
-                  <CheckCircle2 className="w-5 h-5 text-pulse shrink-0 mt-0.5" />
-                  <span>{feat}</span>
-                </li>
+                <dl className="mt-4 flex flex-col text-[13px]">
+                  <DetailRow label="Developer">{game.developer}</DetailRow>
+                  <DetailRow label="Publisher">{game.publisher}</DetailRow>
+                  <DetailRow label="Genre">{game.genres.join(', ')}</DetailRow>
+                  <DetailRow label="Platforms">{game.platforms.join(', ')}</DetailRow>
+                  <DetailRow label="Release date">
+                    <time dateTime={game.releaseDate}>{formatDate(game.releaseDate)}</time>
+                    {game.releaseNote ? ` (${game.releaseNote})` : null}
+                  </DetailRow>
+                </dl>
+              </section>
+
+              {review ? (
+                <section aria-labelledby="game-review" className="mt-10 border-t border-surface-border pt-6">
+                  <SectionHeader id="game-review" title="Our review" />
+                  <div className="flex items-start gap-3">
+                    <RatingBadge score={review.score} size="lg" showLabel />
+                    <p className="text-body-compact leading-relaxed text-ink-muted">
+                      {review.summary}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/reviews/${review.slug}`}
+                    className="mt-4 inline-flex items-center bg-ink px-4 py-2 text-body-compact font-medium text-white transition-colors hover:bg-accent"
+                  >
+                    Read the full review
+                  </Link>
+                </section>
+              ) : null}
+
+              <div className="mt-10 flex flex-col gap-3 border-t border-surface-border pt-6">
+                <h2 className="font-serif text-headline-sm font-semibold text-ink">
+                  Strengths and drawbacks
+                </h2>
+
+                <div>
+                  <h3 className="kicker text-accent-hover">Pros</h3>
+                  <ul className="mt-2 flex flex-col gap-1.5">
+                    {game.pros.map((pro) => (
+                      <li key={pro} className="text-[13px] leading-relaxed text-ink-muted">
+                        {pro}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="kicker text-ink-faint">Cons</h3>
+                  <ul className="mt-2 flex flex-col gap-1.5">
+                    {game.cons.map((con) => (
+                      <li key={con} className="text-[13px] leading-relaxed text-ink-muted">
+                        {con}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <AdSlot name="newsSidebar" format="rectangle" className="mt-10" />
+            </aside>
+          </div>
+        </article>
+
+        {/* Internal linking: only sections that genuinely have content */}
+        {relatedNews.length > 0 ? (
+          <section aria-labelledby="game-news" className="mt-12 border-t border-surface-border pt-8">
+            <SectionHeader
+              id="game-news"
+              badge="Coverage"
+              title="News and analysis"
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {relatedNews.map((article) => (
+                <NewsCard key={article.slug} article={article} />
               ))}
-            </ul>
-          </section>
-
-          {/* Section: Graphics & Visuals */}
-          <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-white mb-3 flex items-center gap-2">
-              <Eye className="w-5 h-5 text-pulse" />
-              Graphics & Visual Presentation
-            </h2>
-            <p className="text-slate-300 leading-relaxed text-base">
-              {game.graphics}
-            </p>
-          </section>
-
-          {/* Section: Sound & Music */}
-          <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-white mb-3 flex items-center gap-2">
-              <Volume2 className="w-5 h-5 text-pulse" />
-              Sound & Audio Design
-            </h2>
-            <p className="text-slate-300 leading-relaxed text-base">
-              {game.sound}
-            </p>
-          </section>
-
-          {/* Section: Performance */}
-          <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-white mb-3 flex items-center gap-2">
-              <Cpu className="w-5 h-5 text-pulse" />
-              Performance & Hardware Optimization
-            </h2>
-            <p className="text-slate-300 leading-relaxed text-base">
-              {game.performance}
-            </p>
-          </section>
-
-          {/* Section: Pros and Cons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-6">
-              <h3 className="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                Key Strengths
-              </h3>
-              <ul className="space-y-2.5">
-                {game.pros.map((pro, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0" />
-                    <span>{pro}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
+          </section>
+        ) : null}
 
-            <div className="rounded-2xl border border-rose-500/30 bg-rose-950/20 p-6">
-              <h3 className="text-lg font-bold text-rose-400 mb-4 flex items-center gap-2">
-                <XCircle className="w-5 h-5 text-rose-400" />
-                Notable Limitations
-              </h3>
-              <ul className="space-y-2.5">
-                {game.cons.map((con, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-2 shrink-0" />
-                    <span>{con}</span>
-                  </li>
-                ))}
-              </ul>
+        {relatedGuides.length > 0 ? (
+          <section aria-labelledby="game-guides" className="mt-12 border-t border-surface-border pt-8">
+            <SectionHeader
+              id="game-guides"
+              badge="Level up"
+              title="Guides for this game"
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {relatedGuides.map((guide) => (
+                <GuideCard key={guide.slug} guide={guide} />
+              ))}
             </div>
-          </div>
-        </div>
+          </section>
+        ) : null}
 
-        {/* Sidebar */}
-        <div className="space-y-8">
-          {/* Quick Specs Box */}
-          <div className="bg-surface rounded-2xl border border-surface-border p-6 shadow-card">
-            <h3 className="text-base font-bold uppercase tracking-wider text-white pb-3 border-b border-surface-border mb-4">
-              Game Specifications
-            </h3>
-
-            <dl className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Rating:</dt>
-                <dd className="font-bold text-white">{game.rating} / 10</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Primary Genre:</dt>
-                <dd className="font-medium text-white">{game.genre}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Release Date:</dt>
-                <dd className="font-medium text-white">{game.releaseDate}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Developer:</dt>
-                <dd className="font-medium text-white text-right">{game.developer}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Publisher:</dt>
-                <dd className="font-medium text-white text-right">{game.publisher}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Platforms:</dt>
-                <dd className="font-medium text-white text-right">{game.platforms.join(', ')}</dd>
-              </div>
-            </dl>
-          </div>
-
-          {/* Ad Slot Ready */}
-          <AdSlot format="rectangle" slotId="game-sidebar-rect" />
-
-          {/* Related Guides */}
-          {relatedGuides.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-base font-bold uppercase tracking-wider text-white">
-                Helpful Guides for {game.title}
-              </h3>
-              <div className="space-y-4">
-                {relatedGuides.map((g: any) => (
-                  <GuideCard key={g.id} guide={g} />
-                ))}
-              </div>
+        {relatedGames.length > 0 ? (
+          <section aria-labelledby="similar-games" className="mt-12 border-t border-surface-border pt-8">
+            <SectionHeader
+              id="similar-games"
+              badge="More to play"
+              title="Players also looked at"
+            />
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+              {relatedGames.slice(0, 6).map((related) => (
+                <GameCard key={related.slug} game={related} showScore />
+              ))}
             </div>
-          )}
-
-          {/* Related News */}
-          {relatedNews.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-base font-bold uppercase tracking-wider text-white">
-                Related News & Tech Analysis
-              </h3>
-              <div className="space-y-4">
-                {relatedNews.map((n: any) => (
-                  <NewsCard key={n.id} article={n} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+          </section>
+        ) : null}
       </div>
+    </>
+  );
+}
 
-      {/* Related Games (4 games) */}
-      {relatedGames.length > 0 && (
-        <section className="mt-16 pt-12 border-t border-surface-border">
-          <h2 className="text-2xl font-bold text-white mb-6">
-            Players Also Enjoyed
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedGames.map((relGame) => (
-              <GameCard key={relGame.id} game={relGame} />
-            ))}
-          </div>
-        </section>
-      )}
-    </article>
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-0.5 border-b border-surface-border py-2.5 sm:flex-row sm:gap-4">
+      <dt className="font-medium text-ink sm:w-32 sm:shrink-0">{label}</dt>
+      <dd className="text-ink-muted">{children}</dd>
+    </div>
   );
 }

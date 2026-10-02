@@ -1,348 +1,322 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Metadata } from 'next';
-import { getAllReviews, getReviewBySlug, getGameBySlug, getRelatedGames } from '@/lib/data';
-import { RatingBadge } from '@/components/RatingBadge';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { ShareButtons } from '@/components/ShareButtons';
-import { GameCard } from '@/components/GameCard';
-import { AdSlot } from '@/components/AdSlot';
-import {
-  Calendar,
-  User,
-  CheckCircle2,
-  XCircle,
-  Gamepad2,
-  Eye,
-  Volume2,
-  Cpu,
-  Layers,
-  CircleDollarSign,
-  ArrowRight
-} from 'lucide-react';
+import { notFound } from 'next/navigation';
 
-interface Props {
-  params: {
-    slug: string;
-  };
+import { AdSlot } from '@/components/AdSlot';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { GameCard } from '@/components/GameCard';
+import { GuideCard } from '@/components/GuideCard';
+import { RatingBadge } from '@/components/RatingBadge';
+import { SectionHeader } from '@/components/SectionHeader';
+import { ShareButtons } from '@/components/ShareButtons';
+import { getAllReviews, getAuthorFor, getGameBySlug, getGuideBySlug, getReviewBySlug } from '@/lib/data';
+import { breadcrumbJsonLd, buildPageMetadata, jsonLd, personJsonLd } from '@/lib/seo';
+import { canonical, formatDate, toIsoDate } from '@/lib/site';
+
+interface PageProps {
+  params: { slug: string };
 }
 
 export function generateStaticParams() {
-  const reviews = getAllReviews();
-  return reviews.map((rev) => ({
-    slug: rev.slug,
-  }));
+  return getAllReviews().map((review) => ({ slug: review.slug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const review = getReviewBySlug(params.slug);
-  if (!review) return { title: 'Review Not Found' };
-
-  return {
-    title: `${review.gameTitle} Review — GamersPulse Score: ${review.score}/10`,
-    description: review.summary,
-    openGraph: {
-      title: `${review.gameTitle} Review | GamersPulse`,
-      description: review.summary,
-      images: [{ url: review.coverImage }],
-    },
-  };
-}
-
-export default function ReviewDetailPage({ params }: Props) {
+export function generateMetadata({ params }: PageProps): Metadata {
   const review = getReviewBySlug(params.slug);
 
   if (!review) {
-    notFound();
+    return buildPageMetadata({
+      title: 'Review not found',
+      description: 'This review does not exist or has been moved.',
+      path: `/reviews/${params.slug}`,
+      index: false,
+    });
   }
 
-  const associatedGame = getGameBySlug(review.gameSlug);
-  const relatedGames = associatedGame
-    ? getRelatedGames(associatedGame.relatedGameSlugs).slice(0, 3)
-    : [];
+  const path = `/reviews/${review.slug}`;
 
-  const jsonLdReview = {
+  return buildPageMetadata({
+    // The template appends "| GamersPulse", so the brand is not repeated here.
+    title: `${review.gameTitle} Review`,
+    description: `${review.gameTitle} review: ${review.summary}`,
+    path,
+    image: review.coverImage,
+    imageAlt: review.imageAlt,
+    type: 'article',
+    publishedTime: toIsoDate(review.publishedAt),
+    ...(review.updatedAt ? { modifiedTime: toIsoDate(review.updatedAt) } : {}),
+  });
+}
+
+export default function ReviewPage({ params }: PageProps) {
+  const review = getReviewBySlug(params.slug);
+  if (!review) notFound();
+
+  const author = getAuthorFor(review.authorId);
+  const game = getGameBySlug(review.gameSlug);
+  const path = `/reviews/${review.slug}`;
+
+  const reviewJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Review',
+    '@id': `${canonical(path)}#review`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical(path) },
+    name: `${review.gameTitle} Review`,
+    reviewBody: review.verdict,
+    datePublished: toIsoDate(review.publishedAt),
+    dateModified: toIsoDate(review.updatedAt ?? review.publishedAt),
+    inLanguage: 'en-US',
+    author: { '@id': `${canonical(`/authors/${author.slug}`)}#person` },
+    publisher: { '@id': `${canonical('/')}#organization` },
     itemReviewed: {
       '@type': 'VideoGame',
       name: review.gameTitle,
+      image: review.coverImage,
       genre: review.genre,
       gamePlatform: review.platforms,
     },
-    author: {
-      '@type': 'Person',
-      name: review.author.name,
-      jobTitle: review.author.role,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'GamersPulse',
-      url: 'https://gamerspulse.site',
-    },
-    datePublished: review.publishedAt,
+    // A single real editorial score. No aggregate rating, no invented rating
+    // count, and never a score on a page that is not a review.
     reviewRating: {
       '@type': 'Rating',
       ratingValue: review.score,
       bestRating: 10,
-      worstRating: 1,
+      worstRating: 0,
     },
-    reviewBody: review.verdict,
   };
 
+  const crumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Reviews', path: '/reviews' },
+    { name: `${review.gameTitle} Review`, path },
+  ]);
+
   return (
-    <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdReview) }}
+        dangerouslySetInnerHTML={{
+          __html: jsonLd({
+            '@context': 'https://schema.org',
+            '@graph': [
+              reviewJsonLd,
+              personJsonLd({
+                name: author.name,
+                jobTitle: author.role,
+                url: canonical(`/authors/${author.slug}`),
+              }),
+            ],
+          }),
+        }}
       />
+      {crumbs ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(crumbs) }} />
+      ) : null}
 
-      <Breadcrumbs
-        items={[
-          { label: 'Reviews', href: '/reviews' },
-          { label: `${review.gameTitle} Review` },
-        ]}
-      />
-
-      {/* Header Info */}
-      <header className="mb-8">
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pulse text-background shadow-pulse-glow">
-            {review.genre} Review
-          </span>
-          <span className="text-xs text-slate-400">
-            Platforms: {review.platforms.join(', ')}
-          </span>
-        </div>
-
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-          {review.gameTitle} — In-Depth Review
-        </h1>
-
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-surface-border text-xs sm:text-sm text-slate-400">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 text-slate-200 font-semibold">
-              <User className="w-4 h-4 text-pulse" />
-              {review.author.name} ({review.author.role})
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" />
-              {review.publishedAt}
-            </span>
-            {review.updatedAt && (
-              <>
-                <span>•</span>
-                <span className="text-slate-500">Updated: {review.updatedAt}</span>
-              </>
-            )}
-          </div>
-
-          <RatingBadge score={review.score} size="md" showLabel />
-        </div>
-      </header>
-
-      {/* Hero Cover */}
-      <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden mb-8 border border-surface-border shadow-card bg-surface-subtle">
-        <Image
-          src={review.coverImage}
-          alt={`${review.gameTitle} review cover image`}
-          fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 1024px"
-          className="object-cover"
+      <div className="editorial-container py-8 md:py-10">
+        <Breadcrumbs
+          items={[{ label: 'Reviews', href: '/reviews' }, { label: `${review.gameTitle} Review` }]}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
 
-        <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div className="max-w-xl">
-            <span className="text-xs font-mono uppercase tracking-widest text-pulse block mb-1">
-              Executive Summary
-            </span>
-            <p className="text-sm sm:text-base text-slate-200 font-medium leading-relaxed drop-shadow-md">
-              {review.summary}
-            </p>
-          </div>
+        <div className="grid grid-cols-1 gap-gutter-desktop lg:grid-cols-12">
+          <article className="lg:col-span-8">
+            <header>
+              <div className="flex flex-wrap items-center gap-3">
+                <RatingBadge score={review.score} size="lg" showLabel />
+                <span className="kicker text-ink-faint">{review.genre}</span>
+              </div>
 
-          {associatedGame && (
-            <Link
-              href={`/games/${associatedGame.slug}`}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface/90 hover:bg-surface border border-surface-border text-white text-xs font-bold backdrop-blur-md transition-colors shrink-0"
-            >
-              <Gamepad2 className="w-4 h-4 text-pulse" />
-              <span>Game Specs</span>
-            </Link>
-          )}
-        </div>
-      </div>
+              <h1 className="mt-4 font-serif text-headline-lg font-semibold leading-tight tracking-tight text-ink md:text-display-hero">
+                {review.gameTitle} Review
+              </h1>
 
-      <ShareButtons title={`${review.gameTitle} Review - GamersPulse`} />
+              <p className="mt-4 text-subhead-editorial leading-relaxed text-ink-muted">
+                {review.summary}
+              </p>
 
-      {/* Review Content Sections */}
-      <div className="space-y-10 my-10 text-slate-300 leading-relaxed">
-        {/* Gameplay */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Gamepad2 className="w-5 h-5 text-pulse" />
-            Gameplay & Mechanics
-          </h2>
-          <p className="text-base sm:text-lg leading-relaxed">{review.gameplay}</p>
-        </section>
+              <div className="mt-6 border-y border-surface-border py-4">
+                <p className="text-body-compact text-ink">
+                  By{' '}
+                  <Link
+                    href={`/authors/${author.slug}`}
+                    className="font-medium underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+                  >
+                    {author.name}
+                  </Link>
+                </p>
+                <dl className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 meta-stamp text-ink-muted">
+                  <dt className="sr-only">Publication date</dt>
+                  <dd>
+                    <time dateTime={review.publishedAt}>
+                      {formatDate(review.publishedAt)}
+                    </time>
+                  </dd>
+                  {review.updatedAt ? (
+                    <>
+                      <dt className="sr-only">Last updated</dt>
+                      <dd aria-hidden="true">·</dd>
+                      <dd>
+                        Updated{' '}
+                        <time dateTime={review.updatedAt}>{formatDate(review.updatedAt)}</time>
+                      </dd>
+                    </>
+                  ) : null}
+                  <dt className="sr-only">Platforms</dt>
+                  <dd aria-hidden="true">·</dd>
+                  <dd>{review.platforms.join(', ')}</dd>
+                </dl>
+              </div>
+            </header>
 
-        {/* Graphics */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Eye className="w-5 h-5 text-pulse" />
-            Graphics & Visual Fidelity
-          </h2>
-          <p className="text-base leading-relaxed">{review.graphics}</p>
-        </section>
+            <figure className="figure-breakout mt-8">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-surface-low">
+                <Image
+                  src={review.coverImage}
+                  alt={review.imageAlt}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover"
+                />
+              </div>
+              <figcaption>{review.imageAlt}</figcaption>
+            </figure>
 
-        {/* Performance */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Cpu className="w-5 h-5 text-pulse" />
-            Performance & Stability
-          </h2>
-          <p className="text-base leading-relaxed">{review.performance}</p>
-        </section>
+            <div className="prose-editorial mt-8">
+              <h2>Gameplay</h2>
+              <p>{review.gameplay}</p>
 
-        {/* Sound & Music */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Volume2 className="w-5 h-5 text-pulse" />
-            Sound & Audio Design
-          </h2>
-          <p className="text-base leading-relaxed">{review.sound}</p>
-        </section>
+              <AdSlot name="articleAfterIntro" className="my-10 not-prose" />
 
-        {/* Content & Depth */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Layers className="w-5 h-5 text-pulse" />
-            Content Depth & Replayability
-          </h2>
-          <p className="text-base leading-relaxed">{review.contentDepth}</p>
-        </section>
+              <h2>Graphics</h2>
+              <p>{review.graphics}</p>
 
-        {/* Value */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <CircleDollarSign className="w-5 h-5 text-pulse" />
-            Value Proposition
-          </h2>
-          <p className="text-base leading-relaxed">{review.value}</p>
-        </section>
+              <h2>Performance</h2>
+              <p>{review.performance}</p>
 
-        {/* Ad Container */}
-        <AdSlot format="horizontal" slotId="review-article-mid" />
+              <h2>Sound</h2>
+              <p>{review.sound}</p>
 
-        {/* Pros & Cons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-6">
-            <h3 className="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              Pros
-            </h3>
-            <ul className="space-y-3">
-              {review.pros.map((pro, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-200">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0" />
-                  <span>{pro}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+              <h2>Content depth</h2>
+              <p>{review.contentDepth}</p>
 
-          <div className="rounded-2xl border border-rose-500/30 bg-rose-950/20 p-6">
-            <h3 className="text-lg font-bold text-rose-400 mb-4 flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-rose-400" />
-              Cons
-            </h3>
-            <ul className="space-y-3">
-              {review.cons.map((con, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-200">
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-2 shrink-0" />
-                  <span>{con}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+              <h2>Value</h2>
+              <p>{review.value}</p>
 
-        {/* Score Breakdown Bars & Final Verdict */}
-        <div className="rounded-3xl border border-pulse/40 bg-gradient-to-b from-surface-elevated to-surface p-8 shadow-card">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-surface-border">
-            <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-pulse">
-                GamersPulse Evaluation
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-white mt-1">
-                Final Review Verdict
-              </h3>
+              <AdSlot name="articleMid" className="my-10 not-prose" />
+
+              <h2>Final thoughts</h2>
+              <p>{review.verdict}</p>
             </div>
-            <RatingBadge score={review.score} size="lg" showLabel />
-          </div>
 
-          {/* Breakdown progress bars */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
-            {review.breakdown.map((item, idx) => (
-              <div key={idx} className="bg-surface-subtle/70 p-3.5 rounded-xl border border-surface-border">
-                <div className="flex justify-between text-xs font-semibold mb-2">
-                  <span className="text-slate-300">{item.category}</span>
-                  <span className="text-pulse">{item.score.toFixed(1)} / 10</span>
+            <ShareButtons title={`${review.gameTitle} Review`} url={path} />
+
+            <AdSlot name="articleFooter" className="mt-8" />
+          </article>
+
+          <aside className="lg:col-span-4" aria-label="Review scorecard">
+            {/* Scorecard */}
+            <section aria-labelledby="scorecard" className="border-t border-surface-border pt-6">
+              <h2 id="scorecard" className="font-serif text-headline-sm font-semibold text-ink">
+                Score breakdown
+              </h2>
+
+              <div className="mt-4 flex flex-col gap-3">
+                {review.breakdown.map((item) => (
+                  <div key={item.category}>
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-[13px] font-medium text-ink">{item.category}</span>
+                      <span className="text-[13px] font-semibold tabular-nums text-accent-hover">
+                        {item.score.toFixed(1)}
+                      </span>
+                    </div>
+                    {/*
+                      The numeric value is always rendered as text above, so the
+                      bar is decorative reinforcement rather than the only signal.
+                    */}
+                    <div
+                      aria-hidden="true"
+                      className="mt-1 h-1 w-full bg-surface-low"
+                    >
+                      <div
+                        className="h-full bg-accent"
+                        style={{ width: `${Math.max(0, Math.min(100, (item.score / 10) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="mt-4 border-t border-surface-border pt-3 text-[12px] leading-relaxed text-ink-faint">
+                Scores are awarded by the GamersPulse editorial desk out of 10. The full method is
+                published on our{' '}
+                <Link
+                  href="/editorial-policy#scoring"
+                  className="underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+                >
+                  editorial policy
+                </Link>
+                .
+              </p>
+            </section>
+
+            {/* Pros and cons */}
+            <section aria-labelledby="pros-cons" className="mt-10 border-t border-surface-border pt-6">
+              <h2 id="pros-cons" className="font-serif text-headline-sm font-semibold text-ink">
+                Pros and cons
+              </h2>
+
+              <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-1">
+                <div>
+                  <h3 className="kicker text-accent-hover">Pros</h3>
+                  <ul className="mt-2 flex flex-col gap-1.5">
+                    {review.pros.map((pro) => (
+                      <li key={pro} className="text-[13px] leading-relaxed text-ink-muted">
+                        {pro}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="w-full bg-surface-border h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-pulse h-full rounded-full transition-all duration-1000"
-                    style={{ width: `${(item.score / 10) * 100}%` }}
-                  />
+                <div>
+                  <h3 className="kicker text-ink-faint">Cons</h3>
+                  <ul className="mt-2 flex flex-col gap-1.5">
+                    {review.cons.map((con) => (
+                      <li key={con} className="text-[13px] leading-relaxed text-ink-muted">
+                        {con}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
-            ))}
-          </div>
+            </section>
 
-          {/* Verdict Text */}
-          <p className="text-base sm:text-lg text-slate-200 font-medium leading-relaxed bg-surface-subtle p-6 rounded-2xl border border-surface-border">
-            &ldquo;{review.verdict}&rdquo;
-          </p>
+            {/* Related game and guides */}
+            {game ? (
+              <section aria-labelledby="game-profile" className="mt-10 border-t border-surface-border pt-6">
+                <SectionHeader id="game-profile" title="Game profile" />
+                <GameCard game={game} />
+              </section>
+            ) : null}
 
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-            <span>
-              Reviewed by <strong>{review.author.name}</strong> • Evaluated under our{' '}
-              <Link href="/editorial-policy#reviews" className="text-pulse underline">
-                Review Methodology
-              </Link>
-            </span>
+            {game?.relatedGuideSlugs.length ? (
+              <section aria-labelledby="review-guides" className="mt-10 border-t border-surface-border pt-6">
+                <SectionHeader id="review-guides" title="Guides for this game" />
+                <div className="flex flex-col gap-4">
+                  {game.relatedGuideSlugs
+                    .map(getGuideBySlug)
+                    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+                    .map((guide) => (
+                      <GuideCard key={guide.slug} guide={guide} />
+                    ))}
+                </div>
+              </section>
+            ) : null}
 
-            {associatedGame && (
-              <Link
-                href={`/games/${associatedGame.slug}`}
-                className="inline-flex items-center gap-1.5 font-bold text-pulse hover:text-pulse-hover"
-              >
-                <span>View {associatedGame.title} Game Page</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            )}
-          </div>
+            <AdSlot name="newsSidebar" format="rectangle" className="mt-10" />
+          </aside>
         </div>
       </div>
-
-      {/* Related Games */}
-      {relatedGames.length > 0 && (
-        <section className="mt-16 pt-10 border-t border-surface-border">
-          <h2 className="text-2xl font-bold text-white mb-6">
-            Recommended Games in this Genre
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {relatedGames.map((g) => (
-              <GameCard key={g.id} game={g} />
-            ))}
-          </div>
-        </section>
-      )}
-    </article>
+    </>
   );
 }

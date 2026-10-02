@@ -2,57 +2,265 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #090a0f;
-  --foreground: #f8fafc;
-  --pulse-accent: #00f0ff;
-}
-
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    background-color: #090a0f;
-    color: #f8fafc;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    overflow-x: hidden;
-    selection-background-color: #00f0ff;
-    selection-color: #090a0f;
+    background-color: #ffffff;
+    color: #202124;
+    /* `var(--font-inter)` is injected by next/font (see app/fonts.ts). */
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      sans-serif;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display / headline serif defaults */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-newsreader), Georgia, Cambria, 'Times New Roman', serif;
+    color: #202124;
+    /* Headlines must never wrap mid-word in narrow viewports */
+    overflow-wrap: break-word;
   }
 
   ::selection {
-    background: #00f0ff;
-    color: #090a0f;
+    background: #f0fdf4;
+    color: #15803d;
   }
 
-  /* Accessible focus outline */
+  /*
+   * Accessible focus outline. Authoritative — individual controls must not
+   * suppress it with `focus:outline-none`; use `focus-visible` styling that
+   * keeps a visible, high-contrast indicator.
+   */
   :focus-visible {
-    outline: 2px solid #00f0ff;
+    outline: 2px solid #16a34a;
     outline-offset: 2px;
   }
+
+  /* Restrained structural scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f7f8fa;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #dbd9dd;
+    border-radius: 9999px;
+    border: 3px solid #f7f8fa;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #bdcaba;
+  }
 }
 
-/* Custom subtle scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+@layer components {
+  /* Editorial canvas: max 1320px with responsive broadsheet margins */
+  .editorial-container {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
 
-::-webkit-scrollbar-track {
-  background: #090a0f;
-}
+  @media (min-width: 768px) {
+    .editorial-container {
+      padding-inline: 2rem;
+    }
+  }
 
-::-webkit-scrollbar-thumb {
-  background: #1e2436;
-  border-radius: 4px;
-}
+  @media (min-width: 1024px) {
+    .editorial-container {
+      padding-inline: 3rem;
+    }
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #2a334d;
+  /*
+   * Longform reading corridor.
+   * 19px / 32px line-height on desktop, 17px / 28px on mobile, capped at
+   * 720px so the measure stays within 65-75 characters.
+   */
+  .prose-editorial {
+    max-width: 720px;
+    margin-inline: auto;
+    font-family: var(--font-inter), sans-serif;
+    font-size: 1.1875rem;
+    line-height: 2rem;
+    letter-spacing: -0.005em;
+    color: #202124;
+  }
+
+  @media (max-width: 767px) {
+    .prose-editorial {
+      font-size: 1.0625rem;
+      line-height: 1.75rem;
+    }
+  }
+
+  .prose-editorial p {
+    margin-bottom: 1.5rem;
+  }
+
+  .prose-editorial p:last-child {
+    margin-bottom: 0;
+  }
+
+  .prose-editorial h2 {
+    font-family: var(--font-newsreader), Georgia, serif;
+    font-size: 1.625rem;
+    line-height: 2.125rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose-editorial h3 {
+    font-family: var(--font-newsreader), Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 500;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose-editorial ul,
+  .prose-editorial ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.25rem;
+  }
+
+  .prose-editorial ul {
+    list-style: none;
+  }
+
+  .prose-editorial ol {
+    list-style: decimal;
+  }
+
+  .prose-editorial li {
+    position: relative;
+    padding-left: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Editorial list marker: a short green rule, not a bullet glyph */
+  .prose-editorial ul > li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.9375rem;
+    width: 6px;
+    height: 1px;
+    background: #16a34a;
+  }
+
+  .prose-editorial ol > li::marker {
+    color: #16a34a;
+    font-weight: 600;
+  }
+
+  /*
+   * Editorial text links: charcoal with a discreet green underline that
+   * strengthens on hover. Colour is never the only cue — the underline is.
+   */
+  .prose-editorial a {
+    color: #202124;
+    border-bottom: 1px solid rgba(22, 163, 74, 0.4);
+    transition: border-color 150ms ease, color 150ms ease;
+  }
+
+  .prose-editorial a:hover {
+    color: #15803d;
+    border-bottom-color: #15803d;
+  }
+
+  /* Longform figure break-out — 980px, only valid inside the 1320px canvas */
+  .figure-breakout {
+    width: 100%;
+    max-width: 980px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /*
+   * When a 720px reading corridor is the container, a 980px breakout cannot
+   * fit. Constrain it to the corridor instead of overflowing the page.
+   */
+  .figure-breakout--contained {
+    max-width: 720px;
+    margin-left: auto;
+    transform: none;
+  }
+
+  .prose-editorial figure figcaption {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #5f6368;
+    margin-top: 0.75rem;
+    text-align: center;
+  }
+
+  /* Editorial pull quote */
+  .pull-quote {
+    font-family: var(--font-newsreader), Georgia, serif;
+    font-style: italic;
+    font-size: 1.75rem;
+    line-height: 2.5rem;
+    letter-spacing: -0.01em;
+    color: #202124;
+  }
+
+  /* Kicker label above section headlines */
+  .kicker {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 0.875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Metadata stamp */
+  .meta-stamp {
+    font-family: var(--font-inter), sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1rem;
+    color: #5f6368;
+  }
+
+  /* Visually hidden but available to assistive technology */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
-  ::before,
-  ::after {
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

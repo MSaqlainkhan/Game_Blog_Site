@@ -1,127 +1,136 @@
-import React from 'react';
 import Link from 'next/link';
-import { Activity, ShieldCheck, Mail, Sparkles } from 'lucide-react';
 
+import { CONTACT_EMAIL, SITE_NAME, SITE_TAGLINE } from '@/lib/site';
+
+const EXPLORE_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/news', label: 'News' },
+  { href: '/reviews', label: 'Reviews' },
+  { href: '/guides', label: 'Guides' },
+  { href: '/games', label: 'Games' },
+];
+
+const ABOUT_LINKS = [
+  { href: '/about', label: 'About GamersPulse' },
+  { href: '/editorial-policy', label: 'Editorial Policy' },
+  { href: '/corrections', label: 'Corrections' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const LEGAL_LINKS = [
+  { href: '/privacy-policy', label: 'Privacy Policy' },
+  { href: '/terms-and-conditions', label: 'Terms' },
+  { href: '/cookie-settings', label: 'Cookie Settings' },
+];
+
+/**
+ * Site footer.
+ *
+ * Grouped per the approved structure: Explore, About, Legal. Copyright year is
+ * derived from the current date rather than hardcoded, so it cannot go stale
+ * against the dateline.
+ */
 export function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="bg-surface border-t border-surface-border mt-20 pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 pb-12 border-b border-surface-border">
-          {/* Publication Identity */}
-          <div className="lg:col-span-2">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2.5 text-white font-extrabold text-xl tracking-tight mb-4 group"
-            >
-              <div className="w-8 h-8 rounded-xl bg-pulse/10 border border-pulse/30 flex items-center justify-center text-pulse shadow-pulse-glow">
-                <Activity className="w-4 h-4 text-pulse" />
-              </div>
-              <span className="leading-none">
-                Gamers<span className="text-pulse">Pulse</span>
-              </span>
+    <footer className="mt-10 w-full border-t border-surface-border bg-white">
+      <div className="editorial-container py-10">
+        <div className="grid grid-cols-1 gap-8 border-b border-surface-border pb-8 md:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <Link href="/" className="font-serif text-xl font-semibold text-ink">
+              {SITE_NAME}
             </Link>
-
-            <p className="text-sm text-slate-400 max-w-sm mb-4 leading-relaxed">
-              Your daily pulse on gaming. Dedicated to honest game reviews, actionable guides, technology analysis, and discovering great games across PC and consoles.
+            <p className="kicker mt-0.5 text-ink-faint">{SITE_TAGLINE}</p>
+            <p className="mt-2 text-body-compact leading-relaxed text-ink-muted">
+              An independent gaming publication covering PC, PlayStation, Xbox and Nintendo — news,
+              reviews written by people who played the game, and guides you can actually follow.
             </p>
-
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>Independent editorial coverage. No sponsored review scores.</span>
-            </div>
           </div>
 
-          {/* Explore Links */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">
+          <nav aria-labelledby="footer-explore">
+            <h2 id="footer-explore" className="kicker mb-2 text-ink-faint">
               Explore
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/games" className="text-slate-400 hover:text-pulse transition-colors">
-                  All Games
-                </Link>
-              </li>
-              <li>
-                <Link href="/reviews" className="text-slate-400 hover:text-pulse transition-colors">
-                  Game Reviews
-                </Link>
-              </li>
-              <li>
-                <Link href="/guides" className="text-slate-400 hover:text-pulse transition-colors">
-                  Gaming Guides
-                </Link>
-              </li>
-              <li>
-                <Link href="/news" className="text-slate-400 hover:text-pulse transition-colors">
-                  Industry & News
-                </Link>
-              </li>
+            </h2>
+            <ul className="flex flex-col gap-1.5">
+              {EXPLORE_LINKS.map((link) => (
+                <li key={link.href}>
+                  <FooterLink href={link.href}>
+                    {link.label}
+                  </FooterLink>
+                </li>
+              ))}
             </ul>
-          </div>
+          </nav>
 
-          {/* Company & Editorial */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">
-              Company
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/about" className="text-slate-400 hover:text-pulse transition-colors">
-                  About GamersPulse
-                </Link>
-              </li>
-              <li>
-                <Link href="/editorial-policy" className="text-slate-400 hover:text-pulse transition-colors">
-                  Editorial Policy & Ethics
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-slate-400 hover:text-pulse transition-colors">
-                  Contact & Corrections
-                </Link>
-              </li>
+          <nav aria-labelledby="footer-about">
+            <h2 id="footer-about" className="kicker mb-2 text-ink-faint">
+              About
+            </h2>
+            <ul className="flex flex-col gap-1.5">
+              {ABOUT_LINKS.map((link) => (
+                <li key={link.href}>
+                  <FooterLink href={link.href}>
+                    {link.label}
+                  </FooterLink>
+                </li>
+              ))}
             </ul>
-          </div>
+          </nav>
 
-          {/* Legal */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-4">
+          <nav aria-labelledby="footer-legal">
+            <h2 id="footer-legal" className="kicker mb-2 text-ink-faint">
               Legal
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/privacy-policy" className="text-slate-400 hover:text-pulse transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms-and-conditions" className="text-slate-400 hover:text-pulse transition-colors">
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li className="pt-2">
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                  <Mail className="w-3.5 h-3.5 text-slate-400" />
-                  <Link href="/contact" className="hover:text-slate-300 transition-colors">
-                    Report an error
-                  </Link>
-                </div>
-              </li>
+            </h2>
+            <ul className="flex flex-col gap-1.5">
+              {LEGAL_LINKS.map((link) => (
+                <li key={link.href}>
+                  <FooterLink href={link.href}>
+                    {link.label}
+                  </FooterLink>
+                </li>
+              ))}
+              {CONTACT_EMAIL ? (
+                <li>
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}`}
+                    className="text-body-compact text-ink-muted underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover hover:decoration-accent-hover"
+                  >
+                    {CONTACT_EMAIL}
+                  </a>
+                </li>
+              ) : null}
             </ul>
-          </div>
+          </nav>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© 2026 GamersPulse. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <span>Domain: <strong className="text-slate-400 font-mono">gamerspulse.site</strong></span>
-            <span>•</span>
-            <span>Independent Gaming Publication</span>
-          </div>
+        <div className="flex flex-col gap-2 pt-6 text-body-compact text-ink-faint sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {year} {SITE_NAME}. All rights reserved.
+          </p>
+          <p className="flex items-center gap-2">
+            <span>Independent gaming publication</span>
+            <span aria-hidden="true">·</span>
+            <Link
+              href="/editorial-policy"
+              className="underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+            >
+              How we work
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="text-body-compact text-ink-muted transition-colors hover:text-accent-hover"
+    >
+      {children}
+    </Link>
   );
 }

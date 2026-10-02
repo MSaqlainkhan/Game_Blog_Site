@@ -1,98 +1,74 @@
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Game } from '@/types';
+import { ChevronRight } from 'lucide-react';
+
 import { RatingBadge } from './RatingBadge';
-import { Gamepad2, Monitor, Tv, Smartphone, ChevronRight } from 'lucide-react';
+import type { Game } from '@/types';
 
 interface GameCardProps {
   game: Game;
-  featured?: boolean;
+  showScore?: boolean;
 }
 
-export function GameCard({ game, featured = false }: GameCardProps) {
-  const getPlatformIcon = (platform: string) => {
-    switch (platform) {
-      case 'PC':
-        return <Monitor className="w-3.5 h-3.5" />;
-      case 'PlayStation':
-      case 'Xbox':
-      case 'Nintendo':
-        return <Gamepad2 className="w-3.5 h-3.5" />;
-      case 'Mobile':
-        return <Smartphone className="w-3.5 h-3.5" />;
-      default:
-        return <Tv className="w-3.5 h-3.5" />;
-    }
-  };
-
+/**
+ * Game teaser.
+ *
+ * The score badge appears only when `game.rating` exists, which is only set
+ * where GamersPulse actually published a review.
+ */
+export function GameCard({ game, showScore = false }: GameCardProps) {
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-surface border border-surface-border overflow-hidden hover:border-pulse/40 transition-all duration-300 hover:shadow-card hover:-translate-y-1">
-      {/* Cover Image */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-subtle">
-        <Image
-          src={game.coverImage}
-          alt={`${game.title} cover image`}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
-
-        {/* Rating Badge */}
-        <div className="absolute top-3 right-3">
-          <RatingBadge score={game.rating} size="sm" />
-        </div>
-
-        {/* Primary Genre Tag */}
-        <div className="absolute bottom-3 left-3">
-          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-background/80 text-pulse border border-pulse/30 backdrop-blur-md">
+    <article className="group flex flex-col justify-between border border-surface-border bg-white p-4 transition-colors hover:border-outline-variant">
+      <div>
+        <Link
+          href={`/games/${game.slug}`}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="relative mb-3 block aspect-[3/4] overflow-hidden rounded bg-surface-low"
+        >
+          <Image
+            src={game.coverImage}
+            alt={game.imageAlt}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover"
+          />
+          <span className="absolute left-2 top-2 border border-surface-border bg-white/90 px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-ink-muted">
             {game.genre}
           </span>
-        </div>
-      </div>
-
-      {/* Card Content */}
-      <div className="flex flex-col flex-grow p-5">
-        {/* Platforms */}
-        <div className="flex items-center gap-2 text-slate-400 text-xs mb-2">
-          {game.platforms.map((plat) => (
-            <span
-              key={plat}
-              className="flex items-center gap-1 bg-surface-subtle px-2 py-0.5 rounded border border-surface-border"
-              title={plat}
-            >
-              {getPlatformIcon(plat)}
-              <span>{plat}</span>
+          {showScore && game.rating !== undefined && (
+            <span className="absolute right-2 top-2">
+              <RatingBadge score={game.rating} size="sm" />
             </span>
-          ))}
-        </div>
+          )}
+        </Link>
 
-        {/* Title */}
-        <h3 className="text-lg font-bold text-white group-hover:text-pulse transition-colors line-clamp-1 mb-2">
-          <Link href={`/games/${game.slug}`}>
-            <span className="absolute inset-0" aria-hidden="true" />
+        <h3 className="font-serif text-[19px] font-medium leading-tight text-ink">
+          <Link
+            href={`/games/${game.slug}`}
+            className="transition-colors hover:text-accent-hover"
+          >
             {game.title}
           </Link>
         </h3>
 
-        {/* Short Description */}
-        <p className="text-xs md:text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed flex-grow">
+        <p className="mt-0.5 text-[11px] text-ink-faint">{game.developer}</p>
+
+        <p className="mt-1 line-clamp-2 text-[13px] leading-snug text-ink-muted">
           {game.description}
         </p>
-
-        {/* Developer & CTA Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-surface-border text-xs">
-          <span className="text-slate-500 font-medium truncate max-w-[140px]">
-            {game.developer}
-          </span>
-
-          <span className="relative z-10 inline-flex items-center gap-1 font-semibold text-pulse group-hover:text-pulse-hover">
-            <span>View Game</span>
-            <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-          </span>
-        </div>
       </div>
-    </div>
+
+      <div className="mt-4 flex items-center justify-between border-t border-surface-border pt-2">
+        <span className="text-[11px] text-ink-faint">{game.platforms.join(' · ')}</span>
+        <Link
+          href={`/games/${game.slug}`}
+          className="inline-flex items-center text-body-compact font-medium text-accent-hover transition-colors hover:text-ink"
+        >
+          View game
+          <ChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+    </article>
   );
 }

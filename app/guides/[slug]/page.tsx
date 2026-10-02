@@ -1,258 +1,246 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Metadata } from 'next';
-import { getAllGuides, getGuideBySlug, getGameBySlug, getRelatedGames } from '@/lib/data';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { ShareButtons } from '@/components/ShareButtons';
-import { GuideCard } from '@/components/GuideCard';
-import { GameCard } from '@/components/GameCard';
-import { AdSlot } from '@/components/AdSlot';
-import {
-  Calendar,
-  Clock,
-  User,
-  Lightbulb,
-  CheckCircle2,
-  Gamepad2,
-  BookOpen,
-  ArrowRight
-} from 'lucide-react';
+import { notFound } from 'next/navigation';
 
-interface Props {
-  params: {
-    slug: string;
-  };
+import { AdSlot } from '@/components/AdSlot';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { GameCard } from '@/components/GameCard';
+import { GuideCard } from '@/components/GuideCard';
+import { SectionHeader } from '@/components/SectionHeader';
+import { ShareButtons } from '@/components/ShareButtons';
+import { getAllGuides, getAuthorFor, getGameBySlug, getGuideBySlug } from '@/lib/data';
+import { breadcrumbJsonLd, buildPageMetadata, jsonLd, personJsonLd } from '@/lib/seo';
+import { canonical, formatDate, toIsoDate } from '@/lib/site';
+
+interface PageProps {
+  params: { slug: string };
 }
 
 export function generateStaticParams() {
-  const guides = getAllGuides();
-  return guides.map((g) => ({
-    slug: g.slug,
-  }));
+  return getAllGuides().map((guide) => ({ slug: guide.slug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const guide = getGuideBySlug(params.slug);
-  if (!guide) return { title: 'Guide Not Found' };
-
-  return {
-    title: `${guide.title} — GamersPulse Guide`,
-    description: guide.summary,
-    openGraph: {
-      title: `${guide.title} | GamersPulse Guides`,
-      description: guide.summary,
-      images: [{ url: guide.heroImage }],
-    },
-  };
-}
-
-export default function GuideDetailPage({ params }: Props) {
+export function generateMetadata({ params }: PageProps): Metadata {
   const guide = getGuideBySlug(params.slug);
 
   if (!guide) {
-    notFound();
+    return buildPageMetadata({
+      title: 'Guide not found',
+      description: 'This guide does not exist or has been moved.',
+      path: `/guides/${params.slug}`,
+      index: false,
+    });
   }
 
-  const associatedGame = getGameBySlug(guide.gameSlug);
-  const relatedGuides = guide.relatedGuideSlugs
-    .map((s) => getGuideBySlug(s))
-    .filter(Boolean);
-  const relatedGames = associatedGame
-    ? getRelatedGames(associatedGame.relatedGameSlugs).slice(0, 2)
-    : [];
+  const path = `/guides/${guide.slug}`;
 
-  const jsonLdGuide = {
+  return buildPageMetadata({
+    title: guide.title,
+    description: guide.summary,
+    path,
+    image: guide.heroImage,
+    imageAlt: guide.imageAlt,
+    type: 'article',
+    publishedTime: toIsoDate(guide.publishedAt),
+    ...(guide.updatedAt ? { modifiedTime: toIsoDate(guide.updatedAt) } : {}),
+  });
+}
+
+export default function GuidePage({ params }: PageProps) {
+  const guide = getGuideBySlug(params.slug);
+  if (!guide) notFound();
+
+  const author = getAuthorFor(guide.authorId);
+  const game = getGuideGame(guide.gameSlug);
+  const path = `/guides/${guide.slug}`;
+
+  const relatedGuides = guide.relatedGuideSlugs
+    .map(getGuideBySlug)
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
+  const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
+    '@id': `${canonical(path)}#article`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical(path) },
     headline: guide.title,
     description: guide.summary,
-    image: guide.heroImage,
-    author: {
-      '@type': 'Person',
-      name: guide.author.name,
-      jobTitle: guide.author.role,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'GamersPulse',
-      url: 'https://gamerspulse.site',
-    },
-    datePublished: guide.publishedAt,
-    dateModified: guide.updatedAt || guide.publishedAt,
+    image: [guide.heroImage],
+    datePublished: toIsoDate(guide.publishedAt),
+    dateModified: toIsoDate(guide.updatedAt ?? guide.publishedAt),
+    inLanguage: 'en-US',
+    author: { '@id': `${canonical(`/authors/${author.slug}`)}#person` },
+    publisher: { '@id': `${canonical('/')}#organization` },
+    articleSection: guide.category,
+    ...(guide.tags?.length ? { keywords: guide.tags.join(', ') } : {}),
   };
 
+  const crumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Guides', path: '/guides' },
+    { name: guide.title, path },
+  ]);
+
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGuide) }}
+        dangerouslySetInnerHTML={{
+          __html: jsonLd({
+            '@context': 'https://schema.org',
+            '@graph': [
+              articleJsonLd,
+              personJsonLd({
+                name: author.name,
+                jobTitle: author.role,
+                url: canonical(`/authors/${author.slug}`),
+              }),
+            ],
+          }),
+        }}
       />
+      {crumbs ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(crumbs) }} />
+      ) : null}
 
-      <Breadcrumbs
-        items={[
-          { label: 'Guides', href: '/guides' },
-          { label: guide.title },
-        ]}
-      />
-
-      {/* Guide Header */}
-      <header className="mb-8">
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pulse text-background shadow-pulse-glow">
-            {guide.category}
-          </span>
-          {associatedGame && (
-            <Link
-              href={`/games/${associatedGame.slug}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-surface border border-surface-border text-slate-300 hover:text-pulse transition-colors"
-            >
-              <Gamepad2 className="w-3.5 h-3.5" />
-              <span>{associatedGame.title}</span>
-            </Link>
-          )}
-        </div>
-
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-          {guide.title}
-        </h1>
-
-        <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-6">
-          {guide.summary}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-surface-border text-xs sm:text-sm text-slate-400">
-          <span className="flex items-center gap-1.5 text-slate-200 font-semibold">
-            <User className="w-4 h-4 text-pulse" />
-            {guide.author.name} ({guide.author.role})
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4" />
-            {guide.publishedAt}
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4" />
-            {guide.readTime}
-          </span>
-          {guide.updatedAt && (
-            <>
-              <span>•</span>
-              <span className="text-slate-500">Updated: {guide.updatedAt}</span>
-            </>
-          )}
-        </div>
-      </header>
-
-      {/* Featured Cover Image */}
-      <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden mb-8 border border-surface-border shadow-card bg-surface-subtle">
-        <Image
-          src={guide.heroImage}
-          alt={guide.title}
-          fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 1024px"
-          className="object-cover"
+      <div className="editorial-container py-8 md:py-10">
+        <Breadcrumbs
+          items={[{ label: 'Guides', href: '/guides' }, { label: guide.title }]}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-      </div>
 
-      <ShareButtons title={`${guide.title} - GamersPulse Guides`} />
+        <div className="grid grid-cols-1 gap-gutter-desktop lg:grid-cols-12">
+          <article className="lg:col-span-8">
+            <header>
+              <p className="kicker border border-surface-border bg-canvas px-2 py-0.5 text-ink-muted">
+                {guide.category}
+              </p>
 
-      {/* Main Guide Sections */}
-      <div className="space-y-10 my-10 text-slate-300 leading-relaxed">
-        {guide.sections.map((section, idx) => (
-          <section key={idx} className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="w-7 h-7 rounded-lg bg-pulse/10 text-pulse border border-pulse/20 text-sm font-mono flex items-center justify-center shrink-0">
-                0{idx + 1}
-              </span>
-              <span>{section.title}</span>
-            </h2>
+              <h1 className="mt-4 font-serif text-headline-lg font-semibold leading-tight tracking-tight text-ink md:text-display-hero">
+                {guide.title}
+              </h1>
 
-            <p className="text-base sm:text-lg leading-relaxed mb-6">
-              {section.content}
-            </p>
+              <p className="mt-4 text-subhead-editorial leading-relaxed text-ink-muted">
+                {guide.summary}
+              </p>
 
-            {section.keyPoints && section.keyPoints.length > 0 && (
-              <div className="bg-surface-subtle/70 rounded-xl p-5 border border-surface-border">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-pulse mb-3">
-                  Tactical Breakdown & Action Items
-                </h3>
-                <ul className="space-y-2.5">
-                  {section.keyPoints.map((point, pIdx) => (
-                    <li key={pIdx} className="flex items-start gap-2.5 text-sm text-slate-200">
-                      <CheckCircle2 className="w-4 h-4 text-pulse shrink-0 mt-0.5" />
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className="mt-6 border-y border-surface-border py-4">
+                <p className="text-body-compact text-ink">
+                  By{' '}
+                  <Link
+                    href={`/authors/${author.slug}`}
+                    className="font-medium underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+                  >
+                    {author.name}
+                  </Link>
+                </p>
+                <dl className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 meta-stamp text-ink-muted">
+                  <dt className="sr-only">Publication date</dt>
+                  <dd>
+                    <time dateTime={guide.publishedAt}>{formatDate(guide.publishedAt)}</time>
+                  </dd>
+                  {guide.updatedAt ? (
+                    <>
+                      <dt className="sr-only">Last updated</dt>
+                      <dd aria-hidden="true">·</dd>
+                      <dd>
+                        Updated{' '}
+                        <time dateTime={guide.updatedAt}>{formatDate(guide.updatedAt)}</time>
+                      </dd>
+                    </>
+                  ) : null}
+                  <dt className="sr-only">Reading time</dt>
+                  <dd aria-hidden="true">·</dd>
+                  <dd>{guide.readTime}</dd>
+                </dl>
               </div>
-            )}
-          </section>
-        ))}
+            </header>
 
-        {/* Ad Container */}
-        <AdSlot format="horizontal" slotId="guide-article-mid" />
+            <figure className="figure-breakout figure-breakout--contained mt-8">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-surface-low">
+                <Image
+                  src={guide.heroImage}
+                  alt={guide.imageAlt}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover"
+                />
+              </div>
+              <figcaption>{guide.imageAlt}</figcaption>
+            </figure>
 
-        {/* Essential Tips Callout Box */}
-        {guide.keyTips && guide.keyTips.length > 0 && (
-          <section className="rounded-3xl border border-pulse/40 bg-gradient-to-b from-surface-elevated to-surface p-8 shadow-card">
-            <h2 className="text-2xl font-black text-white mb-4 flex items-center gap-2">
-              <Lightbulb className="w-6 h-6 text-pulse" />
-              Pro Tips for Easy Execution
-            </h2>
-            <ul className="space-y-3">
-              {guide.keyTips.map((tip, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-slate-200 text-sm md:text-base">
-                  <span className="w-2 h-2 rounded-full bg-pulse mt-2 shrink-0 shadow-pulse-glow" />
-                  <span>{tip}</span>
-                </li>
+            <div className="prose-editorial mt-8">
+              {guide.sections.map((section, index) => (
+                <section key={section.title}>
+                  <h2>{section.title}</h2>
+                  <p>{section.content}</p>
+
+                  {section.keyPoints?.length ? (
+                    <>
+                      <h3>Key points</h3>
+                      <ul>
+                        {section.keyPoints.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+
+                  {index === 0 ? (
+                    <AdSlot name="articleAfterIntro" className="my-10 not-prose" />
+                  ) : null}
+
+                  {index === Math.floor(guide.sections.length / 2) ? (
+                    <AdSlot name="articleMid" className="my-10 not-prose" />
+                  ) : null}
+                </section>
               ))}
-            </ul>
-          </section>
-        )}
+
+              {guide.keyTips.length > 0 ? (
+                <section>
+                  <h2>Key takeaways</h2>
+                  <ul>
+                    {guide.keyTips.map((tip) => (
+                      <li key={tip}>{tip}</li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+            </div>
+
+            <ShareButtons title={guide.title} url={path} />
+
+            <AdSlot name="articleFooter" className="mt-8" />
+          </article>
+
+          <aside className="lg:col-span-4" aria-label="Related guides">
+            {game ? (
+              <section aria-labelledby="guide-game" className="border-t border-surface-border pt-6">
+                <SectionHeader id="guide-game" title="This guide is for" />
+                <GameCard game={game} />
+              </section>
+            ) : null}
+
+            {relatedGuides.length > 0 ? (
+              <section aria-labelledby="related-guides" className="mt-10 border-t border-surface-border pt-6">
+                <SectionHeader id="related-guides" title="Related guides" />
+                <div className="flex flex-col gap-4">
+                  {relatedGuides.slice(0, 3).map((related) => (
+                    <GuideCard key={related.slug} guide={related} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            <AdSlot name="newsSidebar" format="rectangle" className="mt-10" />
+          </aside>
+        </div>
       </div>
-
-      {/* Related Guides */}
-      {relatedGuides.length > 0 && (
-        <section className="mt-16 pt-10 border-t border-surface-border">
-          <h2 className="text-2xl font-bold text-white mb-6">
-            Related Guides
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {relatedGuides.map((g: any) => (
-              <GuideCard key={g.id} guide={g} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Associated Game Link */}
-      {associatedGame && (
-        <section className="mt-12 bg-surface p-6 rounded-2xl border border-surface-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
-              Game Profile
-            </span>
-            <h3 className="text-lg font-bold text-white">
-              {associatedGame.title}
-            </h3>
-            <p className="text-xs text-slate-400">
-              Check out full technical specs, graphics breakdown, and performance notes.
-            </p>
-          </div>
-          <Link
-            href={`/games/${associatedGame.slug}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-pulse text-background font-bold text-xs hover:bg-pulse-hover transition-colors shadow-pulse-glow shrink-0"
-          >
-            <span>View Full Game Specs</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </section>
-      )}
-    </article>
+    </>
   );
+}
+
+function getGuideGame(slug: string) {
+  return getGameBySlug(slug);
 }

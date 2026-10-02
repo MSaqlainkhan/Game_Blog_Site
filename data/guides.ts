@@ -9,13 +9,11 @@ export const guides: Guide[] = [
     summary:
       'Understanding how the expansion’s regional blessing system works, priority fragment locations in early regions, and how to calibrate your character before facing major Remembrance bosses.',
     heroImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Shadow of the Erdtree: Scadutree Fragment Progression and Stat Scaling Playbook',
     readTime: '8 min read',
     publishedAt: 'June 25, 2024',
     updatedAt: 'July 2, 2024',
-    author: {
-      name: 'Marcus Vance',
-      role: 'Senior Editorial Reviewer'
-    },
+    authorId: 'gamerspulse-editorial',
     gameSlug: 'elden-ring-shadow-of-the-erdtree',
     gameTitle: 'Elden Ring: Shadow of the Erdtree',
     sections: [
@@ -83,13 +81,11 @@ export const guides: Guide[] = [
     summary:
       'Master the post-2.0 cyberware capacity system, the best chrome combinations for Sandevistan, Berserk, and Cyberdeck setups, and how to maximize the Edgerunner perk.',
     heroImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Cyberpunk 2077 (2.0+): Ultimate Cyberware Synergy and Stat Cap Optimization',
     readTime: '9 min read',
     publishedAt: 'October 12, 2023',
     updatedAt: 'January 15, 2024',
-    author: {
-      name: 'Elena Rostova',
-      role: 'Lead RPG Critic'
-    },
+    authorId: 'gamerspulse-editorial',
     gameSlug: 'cyberpunk-2077-phantom-liberty',
     gameTitle: 'Cyberpunk 2077: Phantom Liberty',
     sections: [
@@ -155,13 +151,11 @@ export const guides: Guide[] = [
     summary:
       'A tactical survival blueprint for completing the single-save Honour Mode, covering Legendary Actions of Act 1 & 2 bosses, safe positioning, and risk mitigation.',
     heroImage: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Baldur’s Gate 3: Honour Mode Survival Playbook — Camp Economy and Boss Actions',
     readTime: '10 min read',
     publishedAt: 'December 10, 2023',
     updatedAt: 'March 8, 2024',
-    author: {
-      name: 'Elena Rostova',
-      role: 'Lead RPG Critic'
-    },
+    authorId: 'gamerspulse-editorial',
     gameSlug: 'baldurs-gate-3',
     gameTitle: "Baldur's Gate 3",
     sections: [
@@ -228,13 +222,11 @@ export const guides: Guide[] = [
     summary:
       'Optimal weapon loadouts, armor passives, and stratagem compositions necessary to extract successfully on Difficulty 9 and 10 planetary operations.',
     heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Helldivers 2: High-Difficulty Terminid & Automaton Loadout Breakdown (Helldive & Super Helldive)',
     readTime: '7 min read',
     publishedAt: 'April 5, 2024',
     updatedAt: 'August 10, 2024',
-    author: {
-      name: 'Julian Hayes',
-      role: 'Hardware & Tech Editor'
-    },
+    authorId: 'gamerspulse-editorial',
     gameSlug: 'helldivers-2',
     gameTitle: 'Helldivers 2',
     sections: [
@@ -292,13 +284,11 @@ export const guides: Guide[] = [
     summary:
       'The essential mathematical guide to conquering Ante 8: how chips and multipliers interact, Joker slot positioning rules, and high-synergy combos.',
     heroImage: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Balatro: Deck Building Fundamentals, Multiplier Sequencing, and Joker Synergies',
     readTime: '6 min read',
     publishedAt: 'March 20, 2024',
     updatedAt: 'May 14, 2024',
-    author: {
-      name: 'Julian Hayes',
-      role: 'Hardware & Tech Editor'
-    },
+    authorId: 'gamerspulse-editorial',
     gameSlug: 'balatro',
     gameTitle: 'Balatro',
     sections: [
@@ -353,13 +343,11 @@ export const guides: Guide[] = [
     summary:
       'Maximize Saga’s weapon charms and Alan’s Words of Power across Bright Falls, Watery, and the surreal Dark Place.',
     heroImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Alan Wake 2: Inventory Management, Words of Power Locations, and Echo Alignments',
     readTime: '7 min read',
     publishedAt: 'November 8, 2023',
     updatedAt: 'January 20, 2024',
-    author: {
-      name: 'Marcus Vance',
-      role: 'Senior Editorial Reviewer'
-    },
+    authorId: 'gamerspulse-editorial',
     gameSlug: 'alan-wake-2',
     gameTitle: 'Alan Wake 2',
     sections: [

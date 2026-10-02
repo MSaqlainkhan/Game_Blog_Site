@@ -1,52 +1,65 @@
-import React from 'react';
 import Link from 'next/link';
-import { Gamepad2, Home, Newspaper, Search, ArrowRight } from 'lucide-react';
+import { Search } from 'lucide-react';
 
+/**
+ * Global 404.
+ *
+ * This is the only not-found page. An earlier `app/404/page.tsx` duplicated
+ * this, so a 404 response could render either of two different designs
+ * depending on how Next resolved the request. The duplicate was removed.
+ */
 export default function NotFound() {
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16">
-      <div className="max-w-xl w-full text-center bg-surface rounded-3xl border border-surface-border p-8 sm:p-12 shadow-2xl relative overflow-hidden">
-        {/* Glow */}
-        <div className="absolute -top-20 -right-20 w-48 h-48 bg-pulse/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="editorial-container py-16 md:py-24">
+      <div className="mx-auto max-w-xl text-center">
+        <p className="kicker text-accent">Error 404</p>
 
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-pulse/10 border border-pulse/30 text-pulse font-mono font-black text-3xl mb-6 shadow-pulse-glow">
-          404
-        </div>
-
-        <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight mb-3">
-          Page Not Found
+        <h1 className="mt-2 font-serif text-display-hero font-semibold tracking-tight text-ink">
+          Page not found
         </h1>
 
-        <p className="text-sm sm:text-base text-slate-400 mb-8 leading-relaxed">
-          The requested gaming page, review, or guide might have been moved, renamed, or does not exist in our current index.
+        <p className="mt-4 text-body-default leading-relaxed text-ink-muted">
+          The page you are looking for does not exist, or it may have moved. Nothing has been
+          removed from the archive without a permanent redirect.
         </p>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-pulse text-background font-bold text-sm hover:bg-pulse-hover transition-colors shadow-pulse-glow"
+            className="inline-flex h-10 w-full items-center justify-center bg-ink px-5 text-body-compact font-semibold text-white transition-colors hover:bg-accent sm:w-auto"
           >
-            <Home className="w-4 h-4" />
-            <span>Back to Home</span>
+            Back to GamersPulse
           </Link>
 
           <Link
-            href="/games"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-surface-subtle hover:bg-surface-elevated border border-surface-border text-white font-bold text-sm transition-colors"
+            href="/search"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 border border-surface-border bg-white px-5 text-body-compact font-semibold text-ink transition-colors hover:border-ink-faint sm:w-auto"
           >
-            <Gamepad2 className="w-4 h-4 text-pulse" />
-            <span>Explore Games</span>
-          </Link>
-
-          <Link
-            href="/news"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-surface-subtle hover:bg-surface-elevated border border-surface-border text-white font-bold text-sm transition-colors"
-          >
-            <Newspaper className="w-4 h-4 text-pulse" />
-            <span>Read Latest News</span>
+            <Search aria-hidden="true" className="h-4 w-4" />
+            Search GamersPulse
           </Link>
         </div>
+
+        <nav aria-label="Popular sections" className="mt-10 border-t border-surface-border pt-6">
+          <p className="kicker text-ink-faint">Or start with a section</p>
+          <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            {[
+              { href: '/news', label: 'News' },
+              { href: '/reviews', label: 'Reviews' },
+              { href: '/guides', label: 'Guides' },
+              { href: '/games', label: 'Games' },
+            ].map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="text-body-compact text-ink-muted transition-colors hover:text-accent-hover"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </div>
   );

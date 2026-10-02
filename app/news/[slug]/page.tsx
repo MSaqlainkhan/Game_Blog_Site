@@ -1,230 +1,263 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Metadata } from 'next';
-import { getAllNews, getNewsBySlug, getGameBySlug } from '@/lib/data';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { ShareButtons } from '@/components/ShareButtons';
-import { NewsCard } from '@/components/NewsCard';
-import { AdSlot } from '@/components/AdSlot';
-import { Calendar, Clock, User, ArrowRight, Gamepad2, Layers, Compass, HelpCircle } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
-interface Props {
-  params: {
-    slug: string;
-  };
+import { AdSlot } from '@/components/AdSlot';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { GameCard } from '@/components/GameCard';
+import { NewsCard } from '@/components/NewsCard';
+import { SectionHeader } from '@/components/SectionHeader';
+import { ShareButtons } from '@/components/ShareButtons';
+import { getAllNews, getAuthorFor, getGameBySlug, getNewsBySlug } from '@/lib/data';
+import { breadcrumbJsonLd, buildPageMetadata, jsonLd, personJsonLd } from '@/lib/seo';
+import { canonical, formatDate, toIsoDate } from '@/lib/site';
+
+interface PageProps {
+  params: { slug: string };
 }
 
 export function generateStaticParams() {
-  const news = getAllNews();
-  return news.map((article) => ({
-    slug: article.slug,
-  }));
+  return getAllNews().map((article) => ({ slug: article.slug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const article = getNewsBySlug(params.slug);
-  if (!article) return { title: 'Article Not Found' };
-
-  return {
-    title: `${article.title} — GamersPulse News`,
-    description: article.summary,
-    openGraph: {
-      title: `${article.title} | GamersPulse`,
-      description: article.summary,
-      images: [{ url: article.heroImage }],
-    },
-  };
-}
-
-export default function NewsArticlePage({ params }: Props) {
+export function generateMetadata({ params }: PageProps): Metadata {
   const article = getNewsBySlug(params.slug);
 
   if (!article) {
-    notFound();
+    return buildPageMetadata({
+      title: 'Article not found',
+      description: 'This article does not exist or has been moved.',
+      path: `/news/${params.slug}`,
+      index: false,
+    });
   }
 
+  const path = `/news/${article.slug}`;
+
+  return buildPageMetadata({
+    title: article.title,
+    description: article.summary,
+    path,
+    image: article.heroImage,
+    imageAlt: article.imageAlt,
+    type: 'article',
+    publishedTime: toIsoDate(article.publishedAt),
+    ...(article.updatedAt ? { modifiedTime: toIsoDate(article.updatedAt) } : {}),
+  });
+}
+
+export default function NewsArticlePage({ params }: PageProps) {
+  const article = getNewsBySlug(params.slug);
+  if (!article) notFound();
+
+  const author = getAuthorFor(article.authorId);
+  const path = `/news/${article.slug}`;
+
   const relatedArticles = article.relatedArticleSlugs
-    .map((s) => getNewsBySlug(s))
-    .filter(Boolean);
+    .map(getNewsBySlug)
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   const relatedGames = article.relatedGameSlugs
-    .map((s) => getGameBySlug(s))
-    .filter(Boolean);
+    .map(getGameBySlug)
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
-  const jsonLdArticle = {
+  const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
+    '@id': `${canonical(path)}#article`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical(path) },
     headline: article.title,
     description: article.summary,
-    image: article.heroImage,
-    datePublished: article.publishedAt,
-    dateModified: article.updatedAt || article.publishedAt,
-    author: {
-      '@type': 'Person',
-      name: article.author.name,
-      jobTitle: article.author.role,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'GamersPulse',
-      url: 'https://gamerspulse.site',
-    },
+    image: [article.heroImage],
+    datePublished: toIsoDate(article.publishedAt),
+    dateModified: toIsoDate(article.updatedAt ?? article.publishedAt),
+    inLanguage: 'en-US',
+    author: { '@id': `${canonical(`/authors/${author.slug}`)}#person` },
+    publisher: { '@id': `${canonical('/')}#organization` },
+    articleSection: article.category,
+    ...(article.tags?.length ? { keywords: article.tags.join(', ') } : {}),
   };
 
+  const crumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'News', path: '/news' },
+    { name: article.title, path },
+  ]);
+
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+        dangerouslySetInnerHTML={{
+          __html: jsonLd({
+            '@context': 'https://schema.org',
+            '@graph': [articleJsonLd, personJsonLd({ name: author.name, jobTitle: author.role, url: canonical(`/authors/${author.slug}`) })],
+          }),
+        }}
       />
+      {crumbs ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(crumbs) }} />
+      ) : null}
 
-      <Breadcrumbs
-        items={[
-          { label: 'News', href: '/news' },
-          { label: article.title },
-        ]}
-      />
-
-      {/* Header */}
-      <header className="mb-8">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pulse text-background shadow-pulse-glow">
-            {article.category}
-          </span>
-        </div>
-
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-          {article.title}
-        </h1>
-
-        <p className="text-base sm:text-xl text-slate-300 leading-relaxed mb-6 font-medium">
-          {article.summary}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-surface-border text-xs sm:text-sm text-slate-400">
-          <span className="flex items-center gap-1.5 text-slate-200 font-semibold">
-            <User className="w-4 h-4 text-pulse" />
-            {article.author.name} ({article.author.role})
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4" />
-            {article.publishedAt}
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4" />
-            {article.readTime}
-          </span>
-          {article.updatedAt && (
-            <>
-              <span>•</span>
-              <span className="text-slate-500">Updated: {article.updatedAt}</span>
-            </>
-          )}
-        </div>
-      </header>
-
-      {/* Hero Image */}
-      <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden mb-8 border border-surface-border shadow-card bg-surface-subtle">
-        <Image
-          src={article.heroImage}
-          alt={article.title}
-          fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 1024px"
-          className="object-cover"
+      <div className="editorial-container py-8 md:py-10">
+        <Breadcrumbs
+          items={[
+            { label: 'News', href: '/news' },
+            { label: article.title },
+          ]}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
-      </div>
 
-      <ShareButtons title={`${article.title} - GamersPulse News`} />
-
-      {/* Main Body */}
-      <div className="space-y-10 my-10 text-slate-300 leading-relaxed text-base md:text-lg">
-        {/* Introduction */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Introduction</h2>
-          <p className="leading-relaxed whitespace-pre-line">{article.introduction}</p>
-        </section>
-
-        {/* Main Story */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4">The Main Story</h2>
-          <div className="space-y-4 leading-relaxed">
-            {article.mainStory.split('\n\n').map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
-            ))}
-          </div>
-        </section>
-
-        {/* Mid-Article Ad Slot */}
-        <AdSlot format="horizontal" slotId="news-article-mid" />
-
-        {/* What We Know */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-            <Layers className="w-5 h-5 text-pulse" />
-            What We Know
-          </h2>
-          <p className="leading-relaxed">{article.whatWeKnow}</p>
-        </section>
-
-        {/* Why It Matters */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-            <Compass className="w-5 h-5 text-pulse" />
-            Why It Matters
-          </h2>
-          <p className="leading-relaxed">{article.whyItMatters}</p>
-        </section>
-
-        {/* What Happens Next */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-pulse" />
-            What Happens Next
-          </h2>
-          <p className="leading-relaxed">{article.whatHappensNext}</p>
-        </section>
-      </div>
-
-      {/* Mentioned / Related Games */}
-      {relatedGames.length > 0 && (
-        <section className="my-12 bg-surface p-6 rounded-2xl border border-surface-border">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-pulse mb-3">
-            Games Mentioned in this Report
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {relatedGames.map((g: any) => (
+        <div className="grid grid-cols-1 gap-gutter-desktop lg:grid-cols-12">
+          {/* Article column */}
+          <article className="lg:col-span-8">
+            <header>
               <Link
-                key={g.id}
-                href={`/games/${g.slug}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-subtle hover:bg-surface-elevated border border-surface-border text-slate-200 hover:text-pulse text-xs font-semibold transition-colors"
+                href={`/news/category/${article.category.toLowerCase().replace(/\s+/g, '-')}`}
+                className="kicker border border-accent/30 bg-accent-tint px-2 py-0.5 text-accent-hover"
               >
-                <Gamepad2 className="w-3.5 h-3.5" />
-                <span>{g.title}</span>
+                {article.category}
               </Link>
-            ))}
-          </div>
-        </section>
-      )}
 
-      {/* Related News Stories */}
-      {relatedArticles.length > 0 && (
-        <section className="mt-16 pt-10 border-t border-surface-border">
-          <h2 className="text-2xl font-bold text-white mb-6">
-            Related Industry Stories
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {relatedArticles.map((rel: any) => (
-              <NewsCard key={rel.id} article={rel} />
-            ))}
-          </div>
-        </section>
-      )}
-    </article>
+              <h1 className="mt-4 font-serif text-headline-lg font-semibold leading-tight tracking-tight text-ink md:text-display-hero">
+                {article.title}
+              </h1>
+
+              <p className="mt-4 text-subhead-editorial leading-relaxed text-ink-muted">
+                {article.summary}
+              </p>
+
+              <div className="mt-6 border-y border-surface-border py-4">
+                <p className="text-body-compact text-ink">
+                  By{' '}
+                  <Link
+                    href={`/authors/${author.slug}`}
+                    className="font-medium underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+                  >
+                    {author.name}
+                  </Link>
+                </p>
+
+                <dl className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 meta-stamp text-ink-muted">
+                  <dt className="sr-only">Publication date</dt>
+                  <dd>
+                    <time dateTime={article.publishedAt}>
+                      {formatDate(article.publishedAt)}
+                    </time>
+                  </dd>
+
+                  {article.updatedAt ? (
+                    <>
+                      <dt className="sr-only">Last updated</dt>
+                      <dd aria-hidden="true">·</dd>
+                      <dd>
+                        Updated{' '}
+                        <time dateTime={article.updatedAt}>
+                          {formatDate(article.updatedAt)}
+                        </time>
+                      </dd>
+                    </>
+                  ) : null}
+
+                  <dt className="sr-only">Reading time</dt>
+                  <dd aria-hidden="true">·</dd>
+                  <dd>{article.readTime}</dd>
+                </dl>
+              </div>
+            </header>
+
+            <figure className="figure-breakout mt-8">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-surface-low">
+                <Image
+                  src={article.heroImage}
+                  alt={article.imageAlt}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover"
+                />
+              </div>
+              <figcaption>{article.imageAlt}</figcaption>
+            </figure>
+
+            <div className="prose-editorial mt-8">
+              <p>{article.introduction}</p>
+
+              <h2>What happened</h2>
+              <p>{article.mainStory}</p>
+
+              {/* A pull quote is rendered only when the piece carries a real,
+                  attributable quotation. Earlier versions rendered the same
+                  unsourced sentence on every article. */}
+              {article.pullQuote ? (
+                <blockquote className="my-10 border-l-2 border-accent pl-5">
+                  <p className="pull-quote">&ldquo;{article.pullQuote.text}&rdquo;</p>
+                  <footer className="mt-3 font-sans text-[13px] not-italic text-ink-muted">
+                    &mdash; {article.pullQuote.attribution}
+                  </footer>
+                </blockquote>
+              ) : null}
+
+              <h2>What we know</h2>
+              <p>{article.whatWeKnow}</p>
+
+              <AdSlot name="articleMid" className="my-10 not-prose" />
+
+              <h2>Why it matters</h2>
+              <p>{article.whyItMatters}</p>
+
+              <h2>What happens next</h2>
+              <p>{article.whatHappensNext}</p>
+            </div>
+
+            <ShareButtons title={article.title} url={path} />
+
+            {article.tags?.length ? (
+              <ul aria-label="Article tags" className="mt-6 flex flex-wrap gap-2">
+                {article.tags.map((tag) => (
+                  <li
+                    key={tag}
+                    className="border border-surface-border bg-canvas px-2.5 py-1 text-[12px] text-ink-muted"
+                  >
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            <AdSlot name="articleFooter" className="mt-8" />
+          </article>
+
+          {/* Contextual sidebar */}
+          <aside className="lg:col-span-4" aria-label="Related coverage">
+            {relatedGames.length > 0 ? (
+              <section aria-labelledby="mentioned-games" className="border-t border-surface-border pt-6">
+                <h2 id="mentioned-games" className="font-serif text-headline-sm font-semibold text-ink">
+                  Games in this article
+                </h2>
+                <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-1">
+                  {relatedGames.slice(0, 4).map((game) => (
+                    <GameCard key={game.slug} game={game} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {relatedArticles.length > 0 ? (
+              <section aria-labelledby="related-news" className="mt-10 border-t border-surface-border pt-6">
+                <SectionHeader id="related-news" title="Related coverage" />
+                <div className="flex flex-col gap-4">
+                  {relatedArticles.slice(0, 3).map((related) => (
+                    <NewsCard key={related.slug} article={related} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            <AdSlot name="newsSidebar" format="rectangle" className="mt-10" />
+          </aside>
+        </div>
+      </div>
+    </>
   );
 }

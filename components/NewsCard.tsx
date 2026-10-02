@@ -1,132 +1,154 @@
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { NewsArticle } from '@/types';
-import { Clock, Calendar, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+
+import { getAuthorFor } from '@/lib/data';
+import { formatDate } from '@/lib/site';
+import type { NewsArticle } from '@/types';
 
 interface NewsCardProps {
   article: NewsArticle;
   featured?: boolean;
+  /** Only the page's lead image should be eagerly loaded. */
+  priority?: boolean;
 }
 
-export function NewsCard({ article, featured = false }: NewsCardProps) {
+/**
+ * News teaser.
+ *
+ * `featured` renders the broadsheet lead card (image beside headline). The
+ * default variant is a flat editorial card separated by hairline borders, not
+ * a floating surface — depth comes from rules and whitespace, not shadows.
+ */
+export function NewsCard({ article, featured = false, priority = false }: NewsCardProps) {
+  const author = getAuthorFor(article.authorId);
+
   if (featured) {
     return (
-      <div className="group relative flex flex-col lg:flex-row rounded-3xl bg-surface border border-surface-border overflow-hidden hover:border-pulse/50 transition-all duration-300 hover:shadow-card">
-        {/* Featured Image */}
-        <div className="relative lg:w-3/5 aspect-[16/9] lg:aspect-auto overflow-hidden bg-surface-subtle shrink-0 min-h-[280px] lg:min-h-[380px]">
-          <Image
-            src={article.heroImage}
-            alt={article.title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 60vw"
-            priority
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-surface via-surface/30 to-transparent" />
-          <div className="absolute top-4 left-4">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pulse text-background shadow-pulse-glow">
-              Featured Story
-            </span>
-          </div>
+      <article className="group grid grid-cols-1 items-stretch gap-gutter-desktop lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <Link
+            href={`/news/${article.slug}`}
+            tabIndex={-1}
+            aria-hidden="true"
+            className="relative block aspect-[16/10] w-full overflow-hidden rounded-lg bg-surface-low"
+          >
+            <Image
+              src={article.heroImage}
+              alt={article.imageAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              priority={priority}
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+            />
+          </Link>
         </div>
 
-        {/* Content */}
-        <div className="flex flex-col justify-between p-6 lg:p-8 flex-grow">
+        <div className="flex flex-col justify-between lg:col-span-5">
           <div>
-            <div className="flex items-center gap-3 text-xs text-slate-400 mb-3">
-              <span className="text-pulse font-semibold uppercase tracking-wider">
+            <div className="mb-2 flex items-center gap-2">
+              <span className="kicker border border-accent/30 bg-accent-tint px-2 py-0.5 text-accent-hover">
                 {article.category}
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" />
-                {article.publishedAt}
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                {article.readTime}
               </span>
             </div>
 
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white group-hover:text-pulse transition-colors leading-tight mb-4">
-              <Link href={`/news/${article.slug}`}>
-                <span className="absolute inset-0" aria-hidden="true" />
+            <h2 className="font-serif text-headline-sm font-semibold leading-tight tracking-tight text-ink md:text-headline-lg">
+              <Link
+                href={`/news/${article.slug}`}
+                className="transition-colors hover:text-accent-hover"
+              >
                 {article.title}
               </Link>
-            </h3>
+            </h2>
 
-            <p className="text-sm sm:text-base text-slate-400 leading-relaxed line-clamp-3 lg:line-clamp-4 mb-6">
+            <p className="mt-3 text-body-default leading-relaxed text-ink-muted">
               {article.summary}
             </p>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-surface-border text-xs">
-            <span className="text-slate-400">
-              By <strong className="text-slate-200">{article.author.name}</strong> ({article.author.role})
-            </span>
-            <span className="relative z-10 inline-flex items-center gap-1.5 font-bold text-pulse group-hover:text-pulse-hover">
-              <span>Read Full Story</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </span>
+          <div className="mt-6 border-t border-surface-border pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Link
+                href={`/authors/${author.slug}`}
+                className="text-meta-stamp font-medium text-ink underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+              >
+                {author.name}
+              </Link>
+              <p className="meta-stamp text-ink-muted">
+                <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+                <span aria-hidden="true"> · </span>
+                {article.readTime}
+              </p>
+            </div>
+
+            <Link
+              href={`/news/${article.slug}`}
+              className="mt-4 inline-flex items-center gap-2 bg-ink px-4 py-2 text-body-compact font-medium text-white transition-colors hover:bg-accent"
+            >
+              Read full story
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
           </div>
         </div>
-      </div>
+      </article>
     );
   }
 
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-surface border border-surface-border overflow-hidden hover:border-pulse/40 transition-all duration-300 hover:shadow-card hover:-translate-y-1">
-      {/* Article Image */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-subtle">
-        <Image
-          src={article.heroImage}
-          alt={article.title}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
-        <div className="absolute top-3 left-3">
-          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-background/80 text-pulse border border-pulse/30 backdrop-blur-md">
+    <article className="group flex flex-col justify-between border border-surface-border bg-white p-4 transition-colors hover:border-outline-variant">
+      <div>
+        <Link
+          href={`/news/${article.slug}`}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="relative mb-4 block aspect-[16/9] overflow-hidden rounded bg-surface-low"
+        >
+          <Image
+            src={article.heroImage}
+            alt={article.imageAlt}
+            fill
+            sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-cover"
+          />
+          <span className="kicker absolute left-2.5 top-2.5 border border-surface-border bg-white/90 px-2 py-0.5 text-accent-hover">
             {article.category}
           </span>
-        </div>
-      </div>
+        </Link>
 
-      {/* Content */}
-      <div className="flex flex-col flex-grow p-5">
-        <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
-          <span>{article.publishedAt}</span>
-          <span>•</span>
-          <span className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {article.readTime}
-          </span>
-        </div>
+        <p className="meta-stamp mb-1 flex flex-wrap items-center gap-1.5 text-ink-muted">
+          <Link
+            href={`/authors/${author.slug}`}
+            className="font-medium text-ink underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent-hover"
+          >
+            {author.name}
+          </Link>
+          <span aria-hidden="true">·</span>
+          <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{article.readTime}</span>
+        </p>
 
-        <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-pulse transition-colors line-clamp-2 mb-2 leading-snug">
-          <Link href={`/news/${article.slug}`}>
-            <span className="absolute inset-0" aria-hidden="true" />
+        <h3 className="font-serif text-headline-sm font-medium leading-snug text-ink">
+          <Link
+            href={`/news/${article.slug}`}
+            className="transition-colors hover:text-accent-hover"
+          >
             {article.title}
           </Link>
         </h3>
 
-        <p className="text-xs md:text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed flex-grow">
+        <p className="mt-1 line-clamp-3 text-body-compact leading-relaxed text-ink-muted">
           {article.summary}
         </p>
-
-        <div className="flex items-center justify-between pt-3 border-t border-surface-border text-xs">
-          <span className="text-slate-500 truncate max-w-[140px]">
-            {article.author.name}
-          </span>
-          <span className="relative z-10 inline-flex items-center gap-1 font-semibold text-pulse group-hover:text-pulse-hover">
-            <span>Read More</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-          </span>
-        </div>
       </div>
-    </div>
+
+      <Link
+        href={`/news/${article.slug}`}
+        className="mt-4 inline-flex items-center gap-1 border-t border-surface-border pt-3 text-body-compact font-medium text-accent-hover transition-colors hover:text-ink"
+      >
+        Read the analysis
+        <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+      </Link>
+    </article>
   );
 }

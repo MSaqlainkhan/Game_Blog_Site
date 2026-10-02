@@ -1,66 +1,65 @@
-import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Guide } from '@/types';
-import { BookOpen, Clock, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+
+import { formatDate } from '@/lib/site';
+import type { Guide } from '@/types';
 
 interface GuideCardProps {
   guide: Guide;
 }
 
+/**
+ * Guide teaser.
+ *
+ * Shows "Updated" only when the guide genuinely has been revised. Otherwise it
+ * shows the publication date, so a reader is never told a piece was updated
+ * when it was not.
+ */
 export function GuideCard({ guide }: GuideCardProps) {
-  return (
-    <div className="group relative flex flex-col rounded-2xl bg-surface border border-surface-border overflow-hidden hover:border-pulse/40 transition-all duration-300 hover:shadow-card hover:-translate-y-1">
-      {/* Cover */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-subtle">
-        <Image
-          src={guide.heroImage}
-          alt={guide.title}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
+  const dateLabel = guide.updatedAt ? 'Updated' : 'Published';
+  const dateValue = guide.updatedAt ?? guide.publishedAt;
 
-        <div className="absolute top-3 left-3">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-background/80 text-pulse border border-pulse/30 backdrop-blur-md">
-            <BookOpen className="w-3 h-3" />
+  return (
+    <article className="group flex flex-col justify-between border border-surface-border bg-canvas p-4 transition-colors hover:border-outline-variant">
+      <div>
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <span className="kicker border border-surface-border bg-white px-2 py-0.5 text-ink-muted">
             {guide.category}
           </span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-col flex-grow p-5">
-        <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-          <span className="text-pulse/90 font-medium truncate max-w-[160px]">
-            {guide.gameTitle}
-          </span>
-          <span className="flex items-center gap-1 shrink-0">
-            <Clock className="w-3 h-3" />
-            {guide.readTime}
-          </span>
+          <span className="meta-stamp text-ink-faint">{guide.readTime}</span>
         </div>
 
-        <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-pulse transition-colors line-clamp-2 mb-2 leading-snug">
-          <Link href={`/guides/${guide.slug}`}>
-            <span className="absolute inset-0" aria-hidden="true" />
+        <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-accent-hover">
+          {guide.gameTitle}
+        </p>
+
+        <h3 className="font-serif text-[18px] font-medium leading-snug text-ink">
+          <Link
+            href={`/guides/${guide.slug}`}
+            className="transition-colors hover:text-accent-hover"
+          >
             {guide.title}
           </Link>
         </h3>
 
-        <p className="text-xs md:text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed flex-grow">
+        <p className="mt-1 line-clamp-3 text-body-compact leading-relaxed text-ink-muted">
           {guide.summary}
         </p>
-
-        <div className="flex items-center justify-between pt-3 border-t border-surface-border text-xs">
-          <span className="text-slate-500">{guide.publishedAt}</span>
-          <span className="relative z-10 inline-flex items-center gap-1 font-semibold text-pulse group-hover:text-pulse-hover">
-            <span>Read Guide</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-          </span>
-        </div>
       </div>
-    </div>
+
+      <div className="mt-4 flex items-center justify-between border-t border-surface-border pt-3">
+        <p className="meta-stamp text-ink-faint">
+          {dateLabel}:{' '}
+          <time dateTime={dateValue}>{formatDate(dateValue)}</time>
+        </p>
+        <Link
+          href={`/guides/${guide.slug}`}
+          className="inline-flex items-center gap-1 text-body-compact font-medium text-accent-hover transition-colors hover:text-ink"
+        >
+          Read guide
+          <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+    </article>
   );
 }

@@ -1,108 +1,114 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Share2, Link as LinkIcon, Check } from 'lucide-react';
+
+import { SITE_URL } from '@/lib/site';
 
 interface ShareButtonsProps {
   title: string;
-  url?: string;
+  /** Route path, e.g. /news/article-slug. */
+  url: string;
 }
 
+/**
+ * Share controls.
+ *
+ * Opens share targets with `noopener,noreferrer`. No social handle is asserted
+ * in the pre-filled text, because the publication does not claim accounts it
+ * has not linked.
+ */
 export function ShareButtons({ title, url }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
-  const getFullUrl = () => {
-    if (typeof window !== 'undefined') {
-      return url ? `${window.location.origin}${url}` : window.location.href;
-    }
-    return `https://gamerspulse.site${url || ''}`;
-  };
+  const getFullUrl = () =>
+    typeof window !== 'undefined'
+      ? new URL(url, window.location.origin).toString()
+      : `${SITE_URL}${url}`;
 
   const handleCopy = async () => {
     try {
-      const fullUrl = getFullUrl();
-      await navigator.clipboard.writeText(fullUrl);
+      await navigator.clipboard.writeText(getFullUrl());
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      window.setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback
+      // Clipboard unavailable (insecure context or denied permission).
     }
   };
 
   const handleNativeShare = async () => {
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({
-          title,
-          url: getFullUrl(),
-        });
+        await navigator.share({ title, url: getFullUrl() });
       } catch {
-        // User dismissed
+        // Reader dismissed the sheet.
       }
     } else {
       handleCopy();
     }
   };
 
-  const shareOnTwitter = () => {
-    const fullUrl = encodeURIComponent(getFullUrl());
-    const text = encodeURIComponent(`${title} via @GamersPulse`);
-    window.open(`https://twitter.com/intent/tweet?url=${fullUrl}&text=${text}`, '_blank', 'noopener,noreferrer');
+  const shareOnX = () => {
+    const params = new URLSearchParams({ url: getFullUrl(), text: title });
+    window.open(`https://x.com/intent/post?${params.toString()}`, '_blank', 'noopener,noreferrer');
   };
 
   const shareOnReddit = () => {
-    const fullUrl = encodeURIComponent(getFullUrl());
-    const text = encodeURIComponent(title);
-    window.open(`https://reddit.com/submit?url=${fullUrl}&title=${text}`, '_blank', 'noopener,noreferrer');
+    const params = new URLSearchParams({ url: getFullUrl(), title });
+    window.open(`https://www.reddit.com/submit?${params.toString()}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 py-4 border-y border-surface-border">
-      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 mr-2 flex items-center gap-1.5">
-        <Share2 className="w-3.5 h-3.5 text-pulse" />
-        Share Article:
+    <div className="flex flex-wrap items-center gap-2 border-y border-surface-border py-3">
+      <span className="kicker mr-2 flex items-center gap-1.5 text-ink-faint">
+        <Share2 aria-hidden="true" className="h-3.5 w-3.5 text-accent" />
+        Share
       </span>
 
       <button
+        type="button"
         onClick={handleCopy}
         aria-label="Copy link to clipboard"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-surface-subtle hover:bg-surface-elevated text-slate-300 hover:text-white border border-surface-border transition-colors"
+        className="inline-flex h-8 items-center gap-1.5 border border-surface-border bg-white px-3 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
       >
         {copied ? (
           <>
-            <Check className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-emerald-400">Copied!</span>
+            <Check aria-hidden="true" className="h-3.5 w-3.5 text-accent" />
+            <span className="text-accent-hover">Copied</span>
           </>
         ) : (
           <>
-            <LinkIcon className="w-3.5 h-3.5" />
-            <span>Copy Link</span>
+            <LinkIcon aria-hidden="true" className="h-3.5 w-3.5" />
+            <span>Copy link</span>
           </>
         )}
       </button>
 
       <button
-        onClick={shareOnTwitter}
-        aria-label="Share on X (formerly Twitter)"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-surface-subtle hover:bg-surface-elevated text-slate-300 hover:text-white border border-surface-border transition-colors"
+        type="button"
+        onClick={shareOnX}
+        aria-label="Share on X"
+        className="inline-flex h-8 items-center gap-1.5 border border-surface-border bg-white px-3 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
       >
-        <span>X / Twitter</span>
+        X
       </button>
 
       <button
+        type="button"
         onClick={shareOnReddit}
         aria-label="Share on Reddit"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-surface-subtle hover:bg-surface-elevated text-slate-300 hover:text-white border border-surface-border transition-colors"
+        className="inline-flex h-8 items-center gap-1.5 border border-surface-border bg-white px-3 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
       >
-        <span>Reddit</span>
+        Reddit
       </button>
 
       <button
+        type="button"
         onClick={handleNativeShare}
-        aria-label="Native share"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-surface-subtle hover:bg-surface-elevated text-slate-300 hover:text-white border border-surface-border transition-colors sm:hidden"
+        aria-label="More sharing options"
+        className="inline-flex items-center gap-1.5 border border-surface-border bg-canvas px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-white sm:hidden"
       >
-        <Share2 className="w-3.5 h-3.5" />
+        <Share2 aria-hidden="true" className="h-3.5 w-3.5" />
         <span>More</span>
       </button>
     </div>

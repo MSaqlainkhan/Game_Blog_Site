@@ -1,114 +1,118 @@
-import { MetadataRoute } from 'next';
-import { games } from '@/data/games';
-import { reviews } from '@/data/reviews';
-import { newsArticles } from '@/data/news';
-import { guides } from '@/data/guides';
+import type { MetadataRoute } from 'next';
 
+import { getAllAuthors } from '@/data/authors';
+import {
+  getAllGames,
+  getAllGuides,
+  getAllNews,
+  getAllReviews,
+  getNewsCategoriesWithCounts,
+} from '@/lib/data';
+import { getPlatformPages } from '@/lib/platforms';
+import { absoluteUrl, toIsoDate } from '@/lib/site';
+
+/**
+ * Dynamic XML sitemap.
+ *
+ * Generated entirely from the content store, so adding an article makes it
+ * indexable automatically with no manual sitemap edit.
+ *
+ * Deliberately excluded:
+ *  - /search                — result permutations, noindex anyway
+ *  - /404 and /not-found    — error responses
+ *  - the news category list filtered to empty categories — categories with no
+ *    articles have no route, so they cannot appear
+ *  - any query-string variant — only clean canonical paths are emitted
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://gamerspulse.site';
-  const now = new Date();
+  const newest = [...getAllNews(), ...getAllReviews(), ...getAllGuides()]
+    .map((item) => new Date(item.publishedAt).getTime())
+    .filter(Number.isFinite)
+    .sort((a, b) => b - a)[0];
 
-  // Static routes
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/games`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/reviews`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/guides`,
-      lastModified: now,
-      changeFrequency: 'weekly',
+  const sectionLastModified = newest ? new Date(newest) : new Date();
+
+  /** Content that does not change after publication. */
+  const staticEntries = [
+    { path: '/', priority: 1, changeFrequency: 'daily' as const },
+    { path: '/news', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/reviews', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/guides', priority: 0.9, changeFrequency: 'weekly' as const },
+    { path: '/games', priority: 0.9, changeFrequency: 'weekly' as const },
+    // Platform pages are appended from getPlatformPages() below, so they are
+    // deliberately absent here. Listing them in both places emitted each one
+    // twice, which search engines treat as a malformed sitemap.
+    { path: '/about', priority: 0.5, changeFrequency: 'yearly' as const },
+    { path: '/editorial-policy', priority: 0.5, changeFrequency: 'yearly' as const },
+    { path: '/corrections', priority: 0.4, changeFrequency: 'yearly' as const },
+    { path: '/contact', priority: 0.4, changeFrequency: 'yearly' as const },
+    { path: '/privacy-policy', priority: 0.3, changeFrequency: 'yearly' as const },
+    { path: '/terms-and-conditions', priority: 0.3, changeFrequency: 'yearly' as const },
+    { path: '/cookie-settings', priority: 0.2, changeFrequency: 'yearly' as const },
+  ].map((entry) => ({
+    url: absoluteUrl(entry.path),
+    lastModified: sectionLastModified,
+    changeFrequency: entry.changeFrequency,
+    priority: entry.priority,
+  }));
+
+  /** Published articles carry their real modification dates. */
+  const articleEntries = [
+    ...getAllNews().map((article) => ({
+      url: absoluteUrl(`/news/${article.slug}`),
+      lastModified: new Date(toIsoDate(article.updatedAt ?? article.publishedAt)),
+      changeFrequency: 'monthly' as const,
       priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/news`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/editorial-policy`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/privacy-policy`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    },
-    {
-      url: `${baseUrl}/terms-and-conditions`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    },
+    })),
+    ...getAllReviews().map((review) => ({
+      url: absoluteUrl(`/reviews/${review.slug}`),
+      lastModified: new Date(toIsoDate(review.updatedAt ?? review.publishedAt)),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+    ...getAllGuides().map((guide) => ({
+      url: absoluteUrl(`/guides/${guide.slug}`),
+      lastModified: new Date(toIsoDate(guide.updatedAt ?? guide.publishedAt)),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
   ];
 
-  // Dynamic game routes
-  const gameRoutes: MetadataRoute.Sitemap = games.map((game) => ({
-    url: `${baseUrl}/games/${game.slug}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.8,
+  const gameEntries = getAllGames().map((game) => ({
+    url: absoluteUrl(`/games/${game.slug}`),
+    // Game reference pages only change when their facts are corrected.
+    lastModified: sectionLastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
   }));
 
-  // Dynamic review routes
-  const reviewRoutes: MetadataRoute.Sitemap = reviews.map((rev) => ({
-    url: `${baseUrl}/reviews/${rev.slug}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.8,
+  const categoryEntries = getNewsCategoriesWithCounts().map((category) => ({
+    url: absoluteUrl(`/news/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`),
+    lastModified: sectionLastModified,
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
   }));
 
-  // Dynamic news routes
-  const newsRoutes: MetadataRoute.Sitemap = newsArticles.map((article) => ({
-    url: `${baseUrl}/news/${article.slug}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.7,
+  const platformEntries = getPlatformPages().map((platform) => ({
+    url: absoluteUrl(platform.path),
+    lastModified: sectionLastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
   }));
 
-  // Dynamic guide routes
-  const guideRoutes: MetadataRoute.Sitemap = guides.map((guide) => ({
-    url: `${baseUrl}/guides/${guide.slug}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.8,
+  const authorEntries = getAllAuthors().map((author) => ({
+    url: absoluteUrl(`/authors/${author.slug}`),
+    lastModified: sectionLastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.4,
   }));
 
   return [
-    ...staticRoutes,
-    ...gameRoutes,
-    ...reviewRoutes,
-    ...newsRoutes,
-    ...guideRoutes,
+    ...staticEntries,
+    ...categoryEntries,
+    ...platformEntries,
+    ...articleEntries,
+    ...gameEntries,
+    ...authorEntries,
   ];
 }

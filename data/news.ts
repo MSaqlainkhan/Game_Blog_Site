@@ -9,13 +9,11 @@ export const newsArticles: NewsArticle[] = [
     summary:
       'A deep technical examination of Epic Games’ latest Unreal Engine geometry advancements, analyzing how runtime displacement mapping balances micro-polygon detail against system memory bandwidth.',
     heroImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Nanite Tessellation and Programmable Shading: What Next-Gen Geometry Means for Open-World Performance',
     publishedAt: 'September 12, 2024',
     updatedAt: 'September 14, 2024',
     readTime: '6 min read',
-    author: {
-      name: 'Julian Hayes',
-      role: 'Hardware & Tech Editor'
-    },
+    authorId: 'gamerspulse-editorial',
     introduction:
       'Since the unveiling of Unreal Engine 5, developers have grappled with the dual promises of photorealistic geometric density and sustainable hardware performance. While Nanite virtualized geometry eliminated manual Level-of-Detail (LOD) creation for static meshes, recent updates integrating hardware tessellation and programmable rasterization have opened a new chapter for real-time environment authoring.',
     mainStory:
@@ -28,25 +26,23 @@ export const newsArticles: NewsArticle[] = [
       'As upcoming major releases built from the ground up on modern engine revisions enter full production, players should expect games to adopt these dynamic geometric systems as standard baselines. Hardware manufacturers are already optimizing driver-level mesh shader dispatching to ensure sustained 60 FPS performance targets remain achievable.',
     relatedArticleSlugs: [
       'playstation-5-pro-pssr-analysis',
-      'handheld-gaming-pcs-in-2026-linux-proton-status',
+      'handheld-gaming-pcs-linux-proton-status',
       'the-resurgence-of-single-player-immersive-sims'
     ],
     relatedGameSlugs: ['elden-ring-shadow-of-the-erdtree', 'alan-wake-2', 'cyberpunk-2077-phantom-liberty']
   },
   {
-    id: 'handheld-gaming-pcs-in-2026-linux-proton-status',
-    slug: 'handheld-gaming-pcs-in-2026-linux-proton-status',
+    id: 'handheld-gaming-pcs-linux-proton-status',
+    slug: 'handheld-gaming-pcs-linux-proton-status',
     title: 'Handheld Gaming PCs: The State of Linux Gaming, Proton Optimization, and Battery Realities',
     category: 'PC',
     summary:
       'How compatibility layers, low-wattage APU architectures, and customized Linux operating systems transformed portable PC gaming from a niche hobby into an essential platform.',
     heroImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Handheld Gaming PCs: The State of Linux Gaming, Proton Optimization, and Battery Realities',
     publishedAt: 'August 29, 2024',
     readTime: '7 min read',
-    author: {
-      name: 'Julian Hayes',
-      role: 'Hardware & Tech Editor'
-    },
+    authorId: 'gamerspulse-editorial',
     introduction:
       'The modern handheld gaming PC landscape has evolved rapidly over recent years. What began as experimental enthusiast hardware has matured into a thriving ecosystem where millions of players access their existing Steam and Epic libraries on portable devices powered by custom silicon and streamlined operating systems.',
     mainStory:
@@ -72,12 +68,10 @@ export const newsArticles: NewsArticle[] = [
     summary:
       'Players increasingly expect their save files, cosmetics, and achievements to follow them across PC, console, and mobile. How publishers are navigating account federation and platform holder negotiations.',
     heroImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Unified Ecosystems: Why Cross-Platform Progression Is Becoming Non-Negotiable for Players',
     publishedAt: 'August 15, 2024',
     readTime: '5 min read',
-    author: {
-      name: 'Elena Rostova',
-      role: 'Lead RPG Critic'
-    },
+    authorId: 'gamerspulse-editorial',
     introduction:
       'A decade ago, purchasing a game on PlayStation meant your progression was permanently quarantined within that ecosystem. Starting anew on PC or Xbox meant surrendering dozens of hours of unlocked equipment, campaign progression, and social rosters. Today, seamless cross-progression is shifting from a luxury feature to a baseline consumer expectation.',
     mainStory:
@@ -89,7 +83,7 @@ export const newsArticles: NewsArticle[] = [
     whatHappensNext:
       'As cloud gaming latency decreases and portable hardware proliferates, expect future titles to mandate cloud-synced account profiles at launch. The ultimate frontier remains universal license federation—allowing a single digital purchase to grant access across multiple platforms—a consumer dream that remains under rigorous economic debate.',
     relatedArticleSlugs: [
-      'handheld-gaming-pcs-in-2026-linux-proton-status',
+      'handheld-gaming-pcs-linux-proton-status',
       'nintendo-backward-compatibility-roadmap',
       'playstation-5-pro-pssr-analysis'
     ],
@@ -103,12 +97,10 @@ export const newsArticles: NewsArticle[] = [
     summary:
       'Amidst a sea of battle passes and daily engagement loops, player fatigue has driven a passionate renaissance for rich, self-contained single-player games that respect the player’s time.',
     heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for The Resurgence of Single-Player Immersive Experiences: Design Philosophy vs. Live-Service Fatigue',
     publishedAt: 'July 22, 2024',
     readTime: '6 min read',
-    author: {
-      name: 'Marcus Vance',
-      role: 'Senior Editorial Reviewer'
-    },
+    authorId: 'gamerspulse-editorial',
     introduction:
       'For nearly a decade, industry prognosticators declared traditional single-player games an endangered species. Corporate balance sheets prioritized daily active users (DAUs), perpetual recurring revenue models, and battle pass monetization. Yet the resounding commercial and critical triumphs of recent years tell a completely different story.',
     mainStory:
@@ -122,7 +114,7 @@ export const newsArticles: NewsArticle[] = [
     relatedArticleSlugs: [
       'unreal-engine-5-nanite-tessellation-performance',
       'cross-platform-progression-standards',
-      'handheld-gaming-pcs-in-2026-linux-proton-status'
+      'handheld-gaming-pcs-linux-proton-status'
     ],
     relatedGameSlugs: ['alan-wake-2', 'baldurs-gate-3', 'elden-ring-shadow-of-the-erdtree', 'balatro']
   },
@@ -134,16 +126,14 @@ export const newsArticles: NewsArticle[] = [
     summary:
       'An analysis of PlayStation Spectral Super Resolution (PSSR), exploring how custom neural network hardware accelerates image reconstruction without sacrificing temporal stability.',
     heroImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Machine Learning Upscaling on Consoles: How PSSR Bridges the Gap to High-Framerate 4K',
     publishedAt: 'July 8, 2024',
     readTime: '6 min read',
-    author: {
-      name: 'Julian Hayes',
-      role: 'Hardware & Tech Editor'
-    },
+    authorId: 'gamerspulse-editorial',
     introduction:
       'Console hardware generations have historically relied on spatial upscaling, checkerboard rendering, or temporal anti-aliasing (TAA) to project sub-native render targets onto 4K living room displays. With the arrival of dedicated machine learning accelerators on home consoles, the technology of image reconstruction has reached a pivotal milestone.',
     mainStory:
-      'PlayStation Spectral Super Resolution (PSSR) leverages specialized machine learning compute cores integrated within the GPU architecture. Similar to NVIDIA’s DLSS and Intel’s XeSS, PSSR utilizes trained neural network models to analyze motion vectors, jittered input frames, and color buffers to synthesize high-resolution details that did not exist in the initial 1080p or 1440p render passes.\n\nUnlike traditional spatial filters (such as bilinear or lanczos upscaling) that blur edges or accentuate pixel crawl, machine-learning-driven reconstruction accurately resolves fine geometry—such as chain-link fences, foliage foliage, and power lines—without introducing distracting ghosting artifacts.',
+      'PlayStation Spectral Super Resolution (PSSR) leverages specialized machine learning compute cores integrated within the GPU architecture. Similar to NVIDIA’s DLSS and Intel’s XeSS, PSSR utilizes trained neural network models to analyze motion vectors, jittered input frames, and color buffers to synthesize high-resolution details that did not exist in the initial 1080p or 1440p render passes.\n\nUnlike traditional spatial filters (such as bilinear or lanczos upscaling) that blur edges or accentuate pixel crawl, machine-learning-driven reconstruction accurately resolves fine geometry—such as chain-link fences, foliage, and power lines—without introducing distracting ghosting artifacts.',
     whatWeKnow:
       'Developers patching their current titles for PSSR report significant headroom recoveries. By rendering internally at 1440p and applying machine learning reconstruction to 4K at 60 FPS, titles that previously forced players to choose between a 30 FPS Fidelity mode and a blurry 60 FPS Performance mode can now deliver both crisp image fidelity and fluid response times simultaneously.',
     whyItMatters:
@@ -165,12 +155,10 @@ export const newsArticles: NewsArticle[] = [
     summary:
       'Why library continuity, digital account preservation, and physical cartridge compatibility represent the critical foundation for Nintendo’s upcoming console generation.',
     heroImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1200&q=80',
+    imageAlt: 'Illustrative gaming photograph for Preserving Digital Libraries: Nintendo’s Next Hardware Transition and Backward Compatibility',
     publishedAt: 'June 18, 2024',
     readTime: '5 min read',
-    author: {
-      name: 'Elena Rostova',
-      role: 'Lead RPG Critic'
-    },
+    authorId: 'gamerspulse-editorial',
     introduction:
       'Throughout gaming history, console transitions frequently wiped the slate clean. Shifting from cartridges to optical discs, from PowerPC to x86 architectures, and across bespoke media formats meant players routinely abandoned their game collections with every new box under the television. Today, that paradigm is permanently obsolete.',
     mainStory:
@@ -182,7 +170,7 @@ export const newsArticles: NewsArticle[] = [
     whatHappensNext:
       'As official hardware announcements approach, the gaming world will closely watch for details regarding physical cartridge slot backward compatibility, digital patch policies for existing games, and potential graphical enhancement updates for beloved first-party classics.',
     relatedArticleSlugs: [
-      'handheld-gaming-pcs-in-2026-linux-proton-status',
+      'handheld-gaming-pcs-linux-proton-status',
       'the-resurgence-of-single-player-immersive-sims',
       'cross-platform-progression-standards'
     ],

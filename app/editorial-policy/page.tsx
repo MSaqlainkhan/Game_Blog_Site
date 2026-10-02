@@ -15,16 +15,15 @@ import {
   EyeOff
 } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Editorial Policy & Standards — GamersPulse',
+import { buildPageMetadata } from '@/lib/seo';
+import { ADSENSE_STATE, POLICY_EFFECTIVE_DATE, SITE_HOST } from '@/lib/legal';
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Editorial Policy',
   description:
-    'GamersPulse editorial guidelines covering factual accuracy, review scoring standards, sponsored content separation, corrections, and AI disclosures.',
-  openGraph: {
-    title: 'Editorial Policy | GamersPulse',
-    description:
-      'GamersPulse editorial guidelines covering factual accuracy, review scoring standards, sponsored content separation, corrections, and AI disclosures.',
-  },
-};
+    'GamersPulse editorial standards: factual accuracy, how review scores are awarded, corrections, conflicts of interest, image rights and AI-assisted drafting.',
+  path: '/editorial-policy',
+});
 
 export default function EditorialPolicyPage() {
   return (
@@ -32,23 +31,23 @@ export default function EditorialPolicyPage() {
       <Breadcrumbs items={[{ label: 'Editorial Policy' }]} />
 
       <div className="mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-pulse/10 text-pulse border border-pulse/30 mb-3">
+        <div className="inline-flex items-center gap-2 px-2 py-0.5 kicker bg-accent-tint text-accent-hover border border-accent/30 mb-3">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>Ethics & Trust</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
+        <h1 className="font-serif text-[32px] md:text-display-hero font-semibold text-ink tracking-tight leading-[1.1] mb-4">
           Editorial Policy & Standards
         </h1>
-        <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl">
+        <p className="text-base sm:text-body-editorial text-ink-muted leading-relaxed max-w-3xl">
           At GamersPulse, our primary commitment is to our readers. This document outlines our editorial philosophy, fact-checking protocols, review standards, and ethical disclosures.
         </p>
       </div>
 
-      <div className="space-y-10 text-slate-300 leading-relaxed text-base md:text-lg">
+      <div className="space-y-10 text-ink-muted leading-relaxed text-base md:text-lg">
         {/* Editorial Standards */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <FileText className="w-5 h-5 text-pulse" />
+        <section className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-accent" />
             1. Editorial Standards
           </h2>
           <p className="mb-4">
@@ -56,24 +55,24 @@ export default function EditorialPolicyPage() {
           </p>
           <ul className="space-y-3 text-sm sm:text-base">
             <li className="flex items-start gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-pulse shrink-0 mt-1" />
+              <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-1" />
               <span><strong>Accuracy:</strong> All reporting must be grounded in verified documentation, direct hands-on testing, official release notes, or verified developer announcements.</span>
             </li>
             <li className="flex items-start gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-pulse shrink-0 mt-1" />
+              <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-1" />
               <span><strong>Originality:</strong> We do not scrape, copy, or plagiarize content from other outlets or online stores. Every article represents genuine editorial synthesis and original writing.</span>
             </li>
             <li className="flex items-start gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-pulse shrink-0 mt-1" />
+              <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-1" />
               <span><strong>Usefulness:</strong> We do not publish articles merely for search engine indexing or keyword volume. Every article must provide actionable information, thoughtful critique, or genuine entertainment to gamers.</span>
             </li>
           </ul>
         </section>
 
         {/* Fact Checking */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-pulse" />
+        <section className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-accent" />
             2. Fact Checking & Verification
           </h2>
           <p className="mb-4">
@@ -85,30 +84,30 @@ export default function EditorialPolicyPage() {
         </section>
 
         {/* Reviews */}
-        <section id="reviews" className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Scale className="w-5 h-5 text-pulse" />
+        <section id="reviews" className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <Scale className="w-5 h-5 text-accent" />
             3. Review Scoring Methodology
           </h2>
           <p className="mb-4">
             Our game reviews represent independent, critical assessments of a title’s merits and shortcomings. Reviewers spend substantive time with each title across relevant platforms to experience the full gameplay loop, technical performance, and narrative arc before awarding a score.
           </p>
-          <div className="bg-surface-subtle p-5 rounded-xl border border-surface-border text-sm space-y-2 mb-4">
+          <div className="bg-canvas p-5 rounded-xl border border-surface-border text-sm space-y-2 mb-4">
             <p><strong>10.0: Masterpiece</strong> — A rare and defining achievement that sets a new high mark for its genre.</p>
             <p><strong>9.0–9.9: Exceptional</strong> — An outstanding, highly polished experience with only minor flaws.</p>
             <p><strong>8.0–8.9: Great</strong> — Very enjoyable, mechanically sound, and well worth playing.</p>
             <p><strong>7.0–7.9: Good</strong> — Entertaining with worthwhile concepts, but held back by noticeable drawbacks.</p>
             <p><strong>Below 7.0: Flawed</strong> — Hampered by severe bugs, poor design choices, or insufficient value.</p>
           </div>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-ink-muted">
             Publishers or developers providing review copies receive no input, preview rights, or editorial influence over our final score or conclusions.
           </p>
         </section>
 
         {/* Corrections */}
-        <section id="corrections" className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <AlertTriangle className="w-5 h-5 text-pulse" />
+        <section id="corrections" className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-accent" />
             4. Corrections Policy
           </h2>
           <p className="mb-4">
@@ -119,9 +118,9 @@ export default function EditorialPolicyPage() {
             <li>A clear correction notice is added to the top or bottom of the article specifying what was corrected and the date of the update.</li>
             <li>Minor typographical or grammatical fixes may be made without a formal correction notice.</li>
           </ul>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-ink-muted">
             To report an error, please reach out via our{' '}
-            <Link href="/contact" className="text-pulse underline font-semibold">
+            <Link href="/contact" className="text-accent underline font-semibold">
               Contact Page
             </Link>
             .
@@ -129,12 +128,12 @@ export default function EditorialPolicyPage() {
         </section>
 
         {/* Ad container */}
-        <AdSlot format="horizontal" slotId="editorial-policy-mid" />
+        <AdSlot name="staticPageMid" />
 
         {/* Sponsored Content */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <EyeOff className="w-5 h-5 text-pulse" />
+        <section className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <EyeOff className="w-5 h-5 text-accent" />
             5. Sponsored Content & Native Advertising
           </h2>
           <p className="mb-4">
@@ -146,9 +145,9 @@ export default function EditorialPolicyPage() {
         </section>
 
         {/* Advertising Separation */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-pulse" />
+        <section className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-accent" />
             6. Advertising Independence
           </h2>
           <p className="mb-4">
@@ -160,9 +159,9 @@ export default function EditorialPolicyPage() {
         </section>
 
         {/* Affiliate Disclosure */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Scale className="w-5 h-5 text-pulse" />
+        <section className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <Scale className="w-5 h-5 text-accent" />
             7. Affiliate Disclosure
           </h2>
           <p className="mb-4">
@@ -174,23 +173,35 @@ export default function EditorialPolicyPage() {
         </section>
 
         {/* AI-Assisted Content */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Cpu className="w-5 h-5 text-pulse" />
+        <section className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <Cpu className="w-5 h-5 text-accent" />
             8. AI-Assisted Content Guidelines
           </h2>
           <p className="mb-4">
-            GamersPulse believes in total transparency regarding modern editorial technology. AI tools may assist our editorial workflow with research discovery, outlining, copy editing, or drafting assistance.
+            GamersPulse uses AI tools as part of its drafting workflow. Drafts may be produced with
+            AI assistance, which means an article can reach you in a form that a language model
+            helped write. We disclose this rather than presenting machine-assisted drafts as wholly
+            human-written.
+          </p>
+          <p className="mb-4">
+            What the desk takes responsibility for: every published article is reviewed and
+            fact-checked before it goes live, and its facts are checked against real sources rather
+            than accepted as generated. Where an AI draft introduced an invented date, statistic,
+            quotation or source, the piece is corrected or withdrawn rather than published.
           </p>
           <p>
-            However, <strong>all published content must be thoroughly reviewed, verified, edited, and fact-checked by a human editor</strong> for accuracy, tone, and usefulness. We strictly prohibit uncurated, automated AI generation designed solely for keyword stuffing or thin content.
+            What we do not do: publish machine-generated drafts unreviewed, and we do not generate
+            articles at volume to fill keyword gaps. If a piece cannot be made genuinely useful to a
+            reader, it is not published. Machine-assisted drafting is never used to fabricate
+            reviews, scores, quotations, sources or reader statistics.
           </p>
         </section>
 
         {/* Contact */}
-        <section className="bg-surface rounded-2xl border border-surface-border p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2.5">
-            <Mail className="w-5 h-5 text-pulse" />
+        <section className="bg-white rounded border border-surface-border p-6 md:p-8">
+          <h2 className="font-serif text-headline-md font-semibold text-ink tracking-tight mb-4 flex items-center gap-2">
+            <Mail className="w-5 h-5 text-accent" />
             9. Contacting Our Editorial Team
           </h2>
           <p className="mb-6">
@@ -198,7 +209,7 @@ export default function EditorialPolicyPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-pulse text-background font-bold text-sm hover:bg-pulse-hover transition-colors shadow-pulse-glow"
+            className="inline-flex items-center gap-2 h-10 px-5 bg-ink text-white text-body-compact font-semibold hover:bg-accent transition-colors"
           >
             <span>Get in Touch with Editorial</span>
             <ArrowRight className="w-4 h-4" />
