@@ -38,6 +38,11 @@ All configuration is environment-driven. See [`.env.example`](.env.example).
 Neither ID is invented anywhere in the codebase. Both the publisher ID and the
 AdSense script value must come from your own AdSense dashboard.
 
+The AdSense snippet is server-rendered by the root layout (`app/layout.tsx`)
+straight into `<head>`, on every page, which is where the AdSense account
+instructs it to be placed. The other copy of the tag in the document body of the
+served HTML is only the React Server Component payload, not a second script.
+
 ### Production
 
 ```bash

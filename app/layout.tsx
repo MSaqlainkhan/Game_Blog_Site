@@ -130,6 +130,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           // Static, developer-authored JSON — no user input reaches this.
           dangerouslySetInnerHTML={{ __html: jsonLd(siteJsonLd) }}
         />
+        {/*
+          Google AdSense. The root layout is the only `<head>` in the app
+          router, so this places the snippet between <head> and </head> on
+          every page, as the AdSense account requires. Rendered only when a real
+          publisher ID is configured.
+        */}
+        {adsenseSrc ? <AdSenseScript src={adsenseSrc} /> : null}
       </head>
       <body className="bg-white text-ink min-h-screen flex flex-col antialiased selection:bg-accent-tint selection:text-accent-hover">
         <a
@@ -145,7 +152,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <Footer />
         <CookieConsent adsEnabled={Boolean(adsenseSrc)} privacyHref="/privacy-policy" />
-        {adsenseSrc ? <AdSenseScript src={adsenseSrc} /> : null}
       </body>
     </html>
   );
